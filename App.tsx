@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -14,7 +14,10 @@ import {
   TrendingUp,
   ArrowLeft,
   CheckCircle2,
-  Activity
+  Activity,
+  Layers,
+  Globe,
+  BarChart3
 } from 'lucide-react';
 
 // --- Types ---
@@ -71,12 +74,10 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
         {/* Measurement Markings */}
         <div className="absolute top-4 left-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Scale: 1:1.24 Protocol</div>
         <div className="absolute bottom-4 right-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Grid_Ref: AX-902</div>
-        <div className="absolute top-1/2 -left-6 -translate-y-1/2 rotate-90 font-futuristic text-[6px] tracking-[1em] text-white/20">Y-AXIS SYNCHRONIZATION</div>
-        <div className="absolute top-1/2 -right-6 -translate-y-1/2 -rotate-90 font-futuristic text-[6px] tracking-[1em] text-white/20">THRUPUT MONITOR</div>
       </div>
 
       <svg viewBox="0 0 512 512" className="w-[85%] max-w-[520px] h-auto relative z-10" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* 1. CHASSIS INFRASTRUCTURE (FIXED) */}
+        {/* 1. CHASSIS INFRASTRUCTURE (RESTORED) */}
         <g stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} opacity="0.8">
           <path d="M150 360H362V250L415 175L350 120H162L97 175L150 250V360Z" strokeLinejoin="round" />
           <line x1="150" y1="250" x2="362" y2="250" opacity="0.3" />
@@ -97,173 +98,67 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
         <g transform="translate(180, 360)">
           <rect width="152" height="35" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
           <line x1="38" y1="0" x2="38" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
-          <line x1="76" y1="0" x2="76" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
-          <line x1="114" y1="0" x2="114" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
         </g>
 
-        {/* 4. DRIVE SYSTEM (Belt) */}
-        <motion.path 
-          d="M200 256 L244 184 A14 14 0 0 1 268 184 L312 262 A18 18 0 0 1 312 298 L200 304 A24 24 0 0 1 200 256 Z"
-          stroke="white" 
-          strokeWidth="1.2" 
-          strokeDasharray="4 2"
-          animate={{ strokeDashoffset: [0, -40] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          className="opacity-40"
-        />
-
-        {/* L-PULLEY UNIT */}
+        {/* L-PULLEY UNIT (RESTORED) */}
         <g transform="translate(200, 280)">
           <motion.g animate={{ rotate: 360 }} transition={{ duration: rotDuration, repeat: Infinity, ease: "linear" }}>
             <circle cx="0" cy="0" r="24" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
             <circle cx="0" cy="0" r="4" fill="white" />
-            <line x1="-24" y1="0" x2="24" y2="0" stroke="white" strokeWidth="0.5" opacity="0.2" />
           </motion.g>
+          <text y="40" x="-30" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Outreach_Core</text>
         </g>
 
-        {/* TOP-PULLEY UNIT */}
+        {/* TOP-PULLEY UNIT (RESTORED) */}
         <g transform="translate(256, 195)">
           <motion.g animate={{ rotate: -360 }} transition={{ duration: rotDuration * 0.7, repeat: Infinity, ease: "linear" }}>
             <circle cx="0" cy="0" r="14" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
             <circle cx="0" cy="0" r="3" fill="white" />
           </motion.g>
+          <text y="-20" x="-20" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Logic_Filter</text>
         </g>
 
-        {/* R-PULLEY UNIT */}
+        {/* R-PULLEY UNIT (RESTORED) */}
         <g transform="translate(312, 280)">
           <motion.g animate={{ rotate: 360 }} transition={{ duration: rotDuration * 0.9, repeat: Infinity, ease: "linear" }}>
             <circle cx="0" cy="0" r="18" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
             <circle cx="0" cy="0" r="3" fill="white" />
-            <line x1="0" y1="-18" x2="0" y2="18" stroke="white" strokeWidth="0.5" opacity="0.2" />
           </motion.g>
+          <text y="40" x="0" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Conv_Link</text>
         </g>
 
-        {/* 5. PISTON ASSEMBLIES */}
+        {/* 5. PISTON ASSEMBLIES (RESTORED COMPLEXITY) */}
         <g transform="translate(138, 145) rotate(-45)">
           <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <rect x="-15" y="-10" width="30" height="5" stroke="white" strokeWidth="0.5" opacity="0.2" />
-          <line x1="-18" y1="-45" x2="-18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
-          <line x1="18" y1="-45" x2="18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
           <motion.g animate={{ y: [-15, 15, -15] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
             <rect x="-24" y="-55" width="48" height="12" stroke="white" strokeWidth={bStroke} fill="black" />
-            <line x1="0" y1="-43" x2="0" y2="110" stroke="white" strokeWidth="0.8" strokeDasharray="2 4" opacity="0.3" />
           </motion.g>
         </g>
 
         <g transform="translate(374, 145) rotate(45)">
           <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <rect x="-15" y="-10" width="30" height="5" stroke="white" strokeWidth="0.5" opacity="0.2" />
-          <line x1="-18" y1="-45" x2="-18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
-          <line x1="18" y1="-45" x2="18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
           <motion.g animate={{ y: [15, -15, 15] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
             <rect x="-24" y="-55" width="48" height="12" stroke="white" strokeWidth={bStroke} fill="black" />
-            <line x1="0" y1="-43" x2="0" y2="110" stroke="white" strokeWidth="0.8" strokeDasharray="2 4" opacity="0.3" />
           </motion.g>
         </g>
 
         {/* 6. CENTRAL CORE */}
         <g transform="translate(256, 280)">
           <rect x="-22" y="-22" width="44" height="44" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <g transform="translate(0, -50)">
-            <rect x="-2" y="0" width="4" height="20" fill="white" opacity="0.2" />
-            <rect x="-2" y="5" width="4" height="2" fill="white" opacity="0.5" />
-            <rect x="-2" y="10" width="4" height="2" fill="white" opacity="0.5" />
-            <rect x="-2" y="15" width="4" height="2" fill="white" opacity="0.5" />
-          </g>
           <motion.circle r="10" fill="white" animate={{ opacity: [0.1, 0.4, 0.1], scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity }} />
-          <line x1="0" y1="-22" x2="0" y2="-85" stroke="white" strokeWidth="1" opacity="0.4" />
         </g>
 
-        <g transform="translate(305, 230)">
-          <rect width="20" height="20" stroke="white" strokeWidth="0.5" strokeDasharray="1 1" opacity="0.4" />
-          <line x1="0" y1="10" x2="20" y2="10" stroke="white" strokeWidth="0.5" opacity="0.2" />
-        </g>
-
-        {/* Side Cooling Turbine */}
-        <g transform="translate(65, 240)">
-          <rect x="0" y="0" width="35" height="35" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <g transform="translate(17.5, 17.5)">
-            <motion.g animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
-              <path d="M-12 0 L12 0 M0 -12 L0 12" stroke="white" strokeWidth="1" />
-              <circle r="4" fill="black" stroke="white" strokeWidth="0.5" />
-            </motion.g>
-          </g>
-        </g>
-
-        {/* Manifold Curves */}
-        <g stroke="white" strokeWidth="0.5" opacity="0.15">
-          <path d="M162 120 Q200 150, 240 195" />
-          <path d="M350 120 Q312 150, 272 195" />
-        </g>
-
-        {/* Mechanical Linkage */}
-        <g stroke="white" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.2">
-          <line x1="200" y1="280" x2="150" y2="200" />
-          <line x1="312" y1="280" x2="362" y2="200" />
-        </g>
-
-        {/* Top Sensor Array */}
-        <g transform="translate(200, 95)">
-          <rect width="112" height="25" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <line x1="10" y1="12" x2="102" y2="12" stroke="white" strokeWidth="0.5" opacity="0.3" />
-          <motion.rect x="40" y="5" width="32" height="15" fill="white" animate={{ opacity: [0, 0.5, 0] }} transition={{ duration: 1.5, repeat: Infinity }} />
-        </g>
-
-        {/* 7. TECHNICAL CALLOUTS (Annotations around the engine) */}
+        {/* 7. TECHNICAL CALLOUTS (RESTORED) */}
         <g font-family="Orbitron" font-size="6" fill="white" stroke="none">
-          {/* Callout 1: Connect Core */}
           <line x1="256" y1="280" x2="480" y2="340" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
           <circle cx="480" cy="340" r="2" fill="white" />
-          <text x="485" y="343" fill="white" opacity="0.8" text-anchor="start" transform="scale(1)">01. NEURAL BRIDGE</text>
+          <text x="485" y="343" fill="white" opacity="0.8" text-anchor="start">01. NEURAL BRIDGE</text>
           
-          {/* Callout 2: Scale Manifold */}
-          <line x1="138" y1="145" x2="40" y2="60" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
-          <circle cx="40" cy="60" r="2" fill="white" />
-          <text x="35" y="55" fill="white" opacity="0.8" text-anchor="end">02. SCALE COMPRESSION</text>
-
-          {/* Callout 3: Drive Protocol */}
-          <line x1="200" y1="300" x2="60" y2="400" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
-          <circle cx="60" cy="400" r="2" fill="white" />
-          <text x="55" y="415" fill="white" opacity="0.8" text-anchor="end">03. KINETIC REVENUE DRIVE</text>
-          
-          {/* Callout 4: Client Intake */}
-          <line x1="415" y1="175" x2="480" y2="120" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
-          <circle cx="480" cy="120" r="2" fill="white" />
-          <text x="485" y="115" fill="white" opacity="0.8" text-anchor="start">04. CLIENT ABSORPTION PORT</text>
-        </g>
-
-        {/* Structural Wiring Conduits */}
-        <g stroke="white" strokeWidth="0.5" strokeDasharray="1 3" opacity="0.2">
-          <path d="M150 250 Q100 200, 97 175" />
-          <path d="M362 250 Q412 200, 415 175" />
-          <path d="M256 360 Q256 320, 256 302" />
+          <line x1="200" y1="280" x2="50" y2="340" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
+          <circle cx="50" cy="340" r="2" fill="white" />
+          <text x="45" y="343" fill="white" opacity="0.8" text-anchor="end">02. CLIENT_SYNC</text>
         </g>
       </svg>
-      
-      {/* HUD Corners (Telemetry Readouts) */}
-      <div className="absolute top-0 left-0 p-8 space-y-4 hidden lg:block">
-        <div className="flex items-center gap-3">
-          <div className="w-1 h-1 bg-white animate-pulse" />
-          <span className="font-futuristic text-[8px] tracking-widest text-white/60">SYS_AUTH: VERIFIED</span>
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="w-24 h-px bg-white/20" />
-          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">LATENCY: 0.04ms</span>
-          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">ENCRYPTION: AES-X</span>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 right-0 p-8 text-right space-y-4 hidden lg:block">
-        <div className="flex items-center gap-3 justify-end">
-          <span className="font-futuristic text-[8px] tracking-widest text-white/60">THRUPUT_INDEX: 99.4%</span>
-          <div className="w-1 h-1 bg-white animate-pulse" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="w-32 h-px bg-white/20 ml-auto" />
-          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">PROTOCOL: CONN_8.1</span>
-          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">TARGET_YIELD: +$10M</span>
-        </div>
-      </div>
     </div>
   );
 };
@@ -281,10 +176,10 @@ const MyoLogo = ({ className }: { className?: string }) => (
       fill="white"
     />
     <path 
-      d="M50,10 L10,50 L50,90 L90,50 Z" 
+      d="M50,15 L85,50 L50,85 L15,50 Z" 
       fill="none" 
       stroke="white" 
-      strokeWidth="2" 
+      strokeWidth="1" 
       strokeDasharray="4 4"
       className="opacity-20"
     />
@@ -305,8 +200,8 @@ const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => { if (window.scrollY > 20) setScrolled(true); else setScrolled(false); };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -321,7 +216,6 @@ const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }
         >
           <div className="relative flex items-center justify-center">
             <InfinityLogo className="h-10 md:h-12 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]" pulsing={true} />
-            <div className="absolute inset-0 bg-white/10 blur-xl rounded-full scale-0 group-hover:scale-[2] transition-transform duration-1000 opacity-0 group-hover:opacity-10 pointer-events-none" />
           </div>
           <div className="flex flex-col overflow-hidden">
             <span className="font-futuristic font-black text-xl tracking-tighter uppercase hidden md:block text-white leading-none">AutomationGo</span>
@@ -367,8 +261,6 @@ const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }
   );
 };
 
-// --- View Pages (Detail Pages) ---
-
 const PageWrapper: React.FC<{ children: React.ReactNode, title: string, subtitle?: string, onBack: () => void }> = ({ children, title, subtitle, onBack }) => (
   <motion.div 
     initial={{ opacity: 0, scale: 1.05 }}
@@ -405,19 +297,38 @@ const PageWrapper: React.FC<{ children: React.ReactNode, title: string, subtitle
       </div>
       {children}
     </div>
-
-    <div className="fixed inset-0 pointer-events-none z-[-1]">
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-white/[0.02] -skew-x-12 translate-x-1/2" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] bg-white/[0.01] rounded-full blur-[200px]" />
-    </div>
   </motion.div>
 );
 
 const VisionPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <PageWrapper title="Vision" subtitle="The Architecture of Scale" onBack={onBack}>
     <div className="space-y-40">
-      
-      {/* SECTION 1: THE 10M PROJECT */}
+      {/* Serving Value Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+        <div className="space-y-10">
+          <div className="inline-flex items-center gap-3 px-6 py-2 border border-white/20 bg-white/5">
+            <CheckCircle2 size={16} className="text-white" />
+            <span className="font-futuristic text-[10px] tracking-[0.4em] uppercase">Value Protocol</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-futuristic font-bold uppercase leading-tight">Serving Value <br />To Capture Scale</h2>
+          <p className="text-white/50 text-xl font-light leading-relaxed">
+            We believe that profit is a byproduct of pure utility. Our connector vision isn't about mere transactions; it's about identifying gaps in high-potential businesses and bridging them with elite solutions. When we serve value, we secure longevity.
+          </p>
+        </div>
+        
+        <div className="flex flex-col gap-8 justify-center">
+          <div className="p-8 border border-white/10 bg-white/[0.02]">
+            <h4 className="font-futuristic text-lg mb-4 uppercase text-white/80">Collective Growth</h4>
+            <p className="text-white/40 text-sm leading-relaxed">We don't grow alone. Our architecture is designed to lift every node in our network simultaneously.</p>
+          </div>
+          <div className="p-8 border border-white/10 bg-white/[0.02]">
+            <h4 className="font-futuristic text-lg mb-4 uppercase text-white/80">Impact Over Income</h4>
+            <p className="text-white/40 text-sm leading-relaxed">Focusing on the magnitude of the connection ensures the revenue follows naturally.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 10M Project Highlight */}
       <section className="relative">
         <div className="flex flex-col md:flex-row gap-16 items-center">
           <div className="flex-1 space-y-12">
@@ -433,91 +344,45 @@ const VisionPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
               <br />PROJECT
             </h2>
             <p className="text-xl md:text-2xl text-white/40 font-light leading-relaxed max-w-xl">
-              Our target is to architect an ecosystem where our partner network reaches an aggregate revenue of <span className="text-white font-bold">$10,000,000</span>. This is the new standard of connectivity.
+              Our target is to architect an ecosystem where our partner network reaches an aggregate revenue of <span className="text-white font-bold">$10,000,000</span> through our connector protocols.
             </p>
           </div>
           
           <div className="flex-1 relative flex justify-center">
-            <div className="relative w-full max-w-[500px] aspect-square bg-white/5 border border-white/10 flex items-center justify-center group">
-               <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.1] to-transparent" />
-               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="w-[85%] h-[85%] border border-dashed border-white/20 rounded-full"
-                  />
-                  <motion.div 
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                    className="absolute w-3/5 h-3/5 border border-dashed border-white/30 rounded-full"
-                  />
+            <div className="relative w-full max-w-[500px] aspect-square bg-[#050505] border border-white/10 flex items-center justify-center group overflow-hidden">
+               {/* HUD Circles */}
+               <div className="absolute inset-0 pointer-events-none opacity-40">
+                  <svg viewBox="0 0 100 100" className="w-full h-full">
+                    <motion.circle cx="50" cy="50" r="48" fill="none" stroke="white" strokeWidth="0.25" strokeDasharray="1 2" animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} />
+                    <motion.circle cx="50" cy="50" r="44" fill="none" stroke="white" strokeWidth="1" strokeDasharray="10 6" animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} />
+                    <motion.circle cx="50" cy="50" r="40" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="4 4" animate={{ rotate: 360 }} transition={{ duration: 18, repeat: Infinity, ease: "linear" }} />
+                    <motion.circle cx="50" cy="50" r="34" fill="none" stroke="white" strokeWidth="2" strokeDasharray="2 30" animate={{ rotate: -360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} />
+                  </svg>
                </div>
-               <div className="relative z-10 flex flex-col items-center gap-8">
-                 <motion.div 
-                   animate={{ scale: [1, 1.05, 1] }}
-                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                   className="flex flex-col items-center"
-                 >
-                   <span className="text-7xl md:text-[8rem] font-futuristic font-black text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] leading-none">10M</span>
-                 </motion.div>
-               </div>
+               <div className="text-7xl md:text-[8rem] font-futuristic font-black text-white leading-none relative z-10">10M</div>
+               <div className="absolute top-6 left-6 w-6 h-6 border-t-2 border-l-2 border-white/60" />
+               <div className="absolute bottom-6 right-6 w-6 h-6 border-b-2 border-r-2 border-white/60" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2: MYOPROCESS SUCCESS STORY */}
-      <section className="space-y-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-12">
-          <div className="space-y-4">
-            <h3 className="font-futuristic text-xs tracking-[0.6em] uppercase text-white/30 mb-2">Phase 01: Impact Verified</h3>
-            <h4 className="text-4xl md:text-6xl font-futuristic font-black uppercase tracking-tighter">MYOPROCESS CASE</h4>
-          </div>
-          <div className="px-6 py-3 bg-white text-black font-futuristic text-[10px] tracking-widest uppercase font-bold border border-white">Growth Locked</div>
+      {/* The Plan Section */}
+      <section className="space-y-24">
+        <h3 className="text-3xl md:text-5xl font-futuristic font-black uppercase tracking-tighter text-center">The Simple Plan</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          {[
+            { step: "01", title: "Audit & Align", desc: "Identify key leverage points in your existing sales framework." },
+            { step: "02", title: "Bridge Construction", desc: "Connect your infrastructure to our proprietary high-yield networks." },
+            { step: "03", title: "Exponential Yield", desc: "Activate the sales system to capture guaranteed client volume." }
+          ].map((item, idx) => (
+            <div key={idx} className="p-10 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all">
+              <span className="font-futuristic text-5xl text-white/10 mb-6 block">{item.step}</span>
+              <h4 className="font-futuristic text-xl mb-4 uppercase tracking-tighter">{item.title}</h4>
+              <p className="text-white/40 font-light leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <motion.div 
-            whileHover={{ y: -10 }}
-            className="bg-white/5 border border-white/10 p-12 h-[380px] flex flex-col justify-between group transition-all"
-          >
-            <TrendingUp size={40} className="text-white opacity-20 group-hover:opacity-100 transition-opacity" />
-            <div className="space-y-6">
-              <span className="font-futuristic text-[10px] tracking-[0.4em] uppercase text-white/40">Monthly Impact</span>
-              <h5 className="text-7xl font-futuristic font-black text-white">+$20K</h5>
-              <p className="text-white/40 text-sm font-light leading-relaxed">Direct revenue scaling within 30 days of connector implementation.</p>
-            </div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ y: -10 }}
-            className="bg-white/5 border border-white/10 p-12 h-[380px] flex flex-col justify-between group transition-all"
-          >
-            <Users size={40} className="text-white opacity-20 group-hover:opacity-100 transition-opacity" />
-            <div className="space-y-6">
-              <span className="font-futuristic text-[10px] tracking-[0.4em] uppercase text-white/40">Intro Precision</span>
-              <h5 className="text-7xl font-futuristic font-black text-white">94%</h5>
-              <p className="text-white/40 text-sm font-light leading-relaxed">Verified high-intent introduction accuracy through proprietary vetting logic.</p>
-            </div>
-          </motion.div>
-          <motion.div 
-            whileHover={{ y: -10 }}
-            className="bg-white/5 border border-white/10 p-12 h-[380px] flex flex-col justify-between group transition-all"
-          >
-            <CheckCircle2 size={40} className="text-white opacity-20 group-hover:opacity-100 transition-opacity" />
-            <div className="space-y-6">
-              <span className="font-futuristic text-[10px] tracking-[0.4em] uppercase text-white/40">System Status</span>
-              <h5 className="text-5xl md:text-6xl font-futuristic font-black text-white leading-none">ACTIVE</h5>
-              <p className="text-white/40 text-sm font-light leading-relaxed">Connector protocol successfully deployed and delivering guaranteed client growth.</p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-24 text-center max-w-5xl mx-auto px-6">
-        <blockquote className="text-2xl md:text-5xl font-futuristic font-black uppercase tracking-tighter text-white/80 leading-none">
-          "We aren't just connecting businesses; we're establishing the infrastructure for the next generation of <span className="text-white underline underline-offset-[12px] decoration-white/20">market leaders</span>."
-        </blockquote>
-        <div className="mt-16 w-24 h-px bg-white/20 mx-auto" />
       </section>
     </div>
   </PageWrapper>
@@ -525,28 +390,37 @@ const VisionPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
 const SystemPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <PageWrapper title="The System" subtitle="Connector Protocols" onBack={onBack}>
-    <div className="space-y-32">
-      <div className="relative">
-        <TechnicalEngine className="w-full h-auto max-w-5xl mx-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.05)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-          <h4 className="font-futuristic text-[10px] tracking-[0.8em] uppercase text-white/10">Synchronized Engine Matrix</h4>
+    <div className="space-y-40">
+      <TechnicalEngine className="w-full h-auto max-w-5xl mx-auto" />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
+        <div className="space-y-8">
+          <h3 className="font-futuristic text-3xl uppercase tracking-tighter">Guaranteed Client System</h3>
+          <p className="text-white/50 text-lg leading-relaxed font-light">
+            Our system operates on a results-only logic. We don't sell 'leads' or 'clicks'. We deliver signed contracts and verified clients. The connection is the catalyst, but the system is the engine that keeps the fuel flowing.
+          </p>
+          <ul className="space-y-4">
+            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><ShieldCheck size={16} /> ZERO UPFRONT RISK</li>
+            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><Cpu size={16} /> AI-DRIVEN OUTREACH</li>
+            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><Target size={16} /> TARGETED B2B MATCHING</li>
+          </ul>
         </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 border border-white/10">
-        <div className="bg-black/40 backdrop-blur-md p-12 space-y-6 group hover:bg-white/5 transition-colors">
-          <Link2 size={40} className="text-white/40 group-hover:text-white transition-colors" />
-          <h4 className="font-futuristic text-xl uppercase tracking-tighter">The Connector</h4>
-          <p className="text-white/40 font-light leading-relaxed">High-level bridge between elite businesses. Our system finds the synergy and handles the introduction.</p>
-        </div>
-        <div className="bg-black/40 backdrop-blur-md p-12 space-y-6 group hover:bg-white/5 transition-colors">
-          <Target size={40} className="text-white/40 group-hover:text-white transition-colors" />
-          <h4 className="font-futuristic text-xl uppercase tracking-tighter">Access Fees</h4>
-          <p className="text-white/40 font-light leading-relaxed">Entry is exclusive. We charge an Access Fee for system integration and network whitelisting.</p>
-        </div>
-        <div className="bg-black/40 backdrop-blur-md p-12 space-y-6 group hover:bg-white/5 transition-colors">
-          <TrendingUp size={40} className="text-white/40 group-hover:text-white transition-colors" />
-          <h4 className="font-futuristic text-xl uppercase tracking-tighter">Revenue Share</h4>
-          <p className="text-white/40 font-light leading-relaxed">Purely results-driven. We take a small share only when the deal we connected successfully closes.</p>
+        
+        <div className="space-y-8">
+          <h3 className="font-futuristic text-3xl uppercase tracking-tighter">Connector Dynamics</h3>
+          <p className="text-white/50 text-lg leading-relaxed font-light">
+            We bridge the gap between businesses that have the 'Solution' and businesses that have the 'Pain'. AutomationGo sits at the nexus, managing the flow of data, trust, and capital.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="p-6 border border-white/10 bg-white/5">
+               <span className="block text-2xl font-black font-futuristic">98%</span>
+               <span className="text-[8px] uppercase tracking-widest text-white/40 font-futuristic">Match Accuracy</span>
+             </div>
+             <div className="p-6 border border-white/10 bg-white/5">
+               <span className="block text-2xl font-black font-futuristic">14D</span>
+               <span className="text-[8px] uppercase tracking-widest text-white/40 font-futuristic">Avg Integration</span>
+             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -555,23 +429,46 @@ const SystemPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
 const PortfolioPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <PageWrapper title="Portfolio" subtitle="Documented Success" onBack={onBack}>
-    <div className="max-w-4xl bg-white/5 border border-white/10 p-12 flex flex-col md:flex-row gap-16 items-center">
-       <div className="w-48 h-48 shrink-0 flex items-center justify-center border border-white/10">
-          <MyoLogo className="w-2/3 h-auto" />
-       </div>
-       <div>
-         <h3 className="font-futuristic text-3xl uppercase mb-6">MyoProcess</h3>
-         <div className="flex gap-4 mb-8">
-            <span className="px-3 py-1 bg-white text-black text-[8px] font-black uppercase tracking-widest font-futuristic">Case: Active</span>
-            <span className="px-3 py-1 border border-white/20 text-white text-[8px] font-black uppercase tracking-widest font-futuristic">Scale: High</span>
+    <div className="space-y-32">
+      {/* Flagship Case Study */}
+      <section className="max-w-5xl mx-auto bg-[#0a0a0a] border border-white/10 p-8 md:p-16 flex flex-col lg:flex-row gap-16 items-center">
+         <div className="w-full lg:w-1/3 aspect-square shrink-0 flex items-center justify-center border border-white/5 bg-[#080808] relative group">
+            <MyoLogo className="w-2/3 h-auto relative z-10 transition-transform group-hover:scale-110 duration-700" />
+            <div className="absolute inset-4 border border-white/[0.03] pointer-events-none" />
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-futuristic text-[8px] tracking-[0.4em] opacity-40">FLAGSHIP_NODE</div>
          </div>
-         <p className="text-white/40 text-xl font-light leading-relaxed mb-10">
-           Immediate revenue capture of $20,000 in December 2025 alone following Connector deployment.
-         </p>
-         <button className="flex items-center gap-3 font-futuristic text-[10px] tracking-widest uppercase text-white/60 hover:text-white transition-colors">
-           View Full Dataset <ArrowRight size={14} />
-         </button>
-       </div>
+         
+         <div className="flex-1 space-y-10">
+           <div>
+             <span className="font-futuristic text-[10px] tracking-[0.5em] text-white/30 uppercase mb-4 block">Case Study_01</span>
+             <h3 className="font-futuristic text-5xl uppercase mb-4 tracking-tighter">MyoProcess</h3>
+             <p className="text-white/40 text-xl font-light leading-relaxed">
+               A comprehensive overhaul of B2B acquisition strategies, connecting their operational backend with high-tier corporate clients.
+             </p>
+           </div>
+           
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-white/10 pt-10">
+             <div>
+               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Dec Yield</span>
+               <span className="text-4xl font-black font-futuristic">$20,000</span>
+             </div>
+             <div>
+               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Efficiency</span>
+               <span className="text-4xl font-black font-futuristic">+40%</span>
+             </div>
+             <div className="hidden md:block">
+               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Status</span>
+               <span className="text-4xl font-black font-futuristic">SCALED</span>
+             </div>
+           </div>
+
+           <div className="flex gap-4">
+              <button className="flex items-center gap-3 px-8 py-4 border border-white/20 font-futuristic text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-all">
+                Access Dossier <ArrowRight size={14} />
+              </button>
+           </div>
+         </div>
+      </section>
     </div>
   </PageWrapper>
 );
@@ -583,7 +480,6 @@ const TeamPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
         <div key={i} className="group">
            <div className="aspect-[3/4] bg-white/5 border border-white/10 flex items-center justify-center relative overflow-hidden mb-8">
               <span className="text-8xl font-futuristic font-black text-white/5 group-hover:text-white/20 transition-all duration-700">{member.initials}</span>
-              <div className="absolute inset-4 border border-white/5 pointer-events-none" />
            </div>
            <h4 className="font-futuristic text-2xl uppercase tracking-tighter mb-2">{member.name}</h4>
            <p className="text-white/40 text-[10px] tracking-[0.5em] uppercase font-futuristic">{member.role}</p>
@@ -596,15 +492,9 @@ const TeamPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 const ContactPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <PageWrapper title="Contact" subtitle="Direct Line" onBack={onBack}>
     <div className="max-w-2xl">
-      <p className="text-2xl text-white/40 font-light leading-relaxed mb-16">
-        The network is selective. We initiate strategy audits only for qualifying businesses.
-      </p>
-      <div className="space-y-4">
-        <p className="font-futuristic text-[10px] tracking-[0.6em] uppercase text-white/20">Official Mailbox</p>
-        <a href="mailto:info@automationgo.in" className="text-3xl md:text-5xl font-futuristic font-black border-b-4 border-white pb-4 hover:opacity-50 transition-all block">
-          info@automationgo.in
-        </a>
-      </div>
+      <a href="mailto:info@automationgo.in" className="text-3xl md:text-5xl font-futuristic font-black border-b-4 border-white pb-4 hover:opacity-50 transition-all block">
+        info@automationgo.in
+      </a>
     </div>
   </PageWrapper>
 );
@@ -621,31 +511,20 @@ const Hero: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) => {
       </div>
       <div className="relative z-10 text-center px-6">
         <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="inline-block px-4 py-1 border border-white/20 mb-10 rounded-full">
-            <span className="font-futuristic text-[10px] tracking-[0.6em] text-white/60 uppercase">Strategic Connector Engine</span>
-          </motion.div>
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-futuristic font-black tracking-tighter leading-[0.85] mb-8 text-white">
             SCALE <br />
-            <span className="text-white opacity-25 border-t border-b border-white/20 py-2 block">WITHOUT</span>
+            <span className="text-white opacity-25 border-t border-b border-white/20 py-2 block uppercase">Without</span>
             LIMITS
           </h1>
-          <p className="max-w-2xl mx-auto text-white/40 text-lg md:text-xl font-light mb-12 tracking-wide">
-            Architecting bridges between elite businesses using our <span className="text-white font-bold">Guaranteed Client System</span>.
+          <p className="max-w-2xl mx-auto text-white/40 text-lg md:text-xl font-light mb-12">
+            Architecting bridges between elite businesses using our Guaranteed Client System.
           </p>
           <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-            <button onClick={() => setView('contact')} className="w-full md:w-auto px-12 py-6 bg-white text-black font-futuristic text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white border border-white transition-all duration-500 flex items-center justify-center gap-3 group">
-              Get Started <ArrowRight className="group-hover:translate-x-2 transition-transform" size={16} />
-            </button>
-            <button onClick={() => setView('portfolio')} className="w-full md:w-auto px-12 py-6 border border-white/20 hover:border-white transition-all duration-500 font-futuristic text-xs tracking-[0.3em] uppercase text-white flex items-center justify-center">
-              View Case Study
-            </button>
+            <button onClick={() => setView('contact')} className="w-full md:w-auto px-12 py-6 bg-white text-black font-futuristic text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white border border-white transition-all duration-500">Get Started</button>
+            <button onClick={() => setView('portfolio')} className="w-full md:w-auto px-12 py-6 border border-white/20 hover:border-white transition-all duration-500 font-futuristic text-xs tracking-[0.3em] uppercase text-white">View Case Study</button>
           </div>
         </motion.div>
       </div>
-      <motion.div animate={{ y: [0, 15, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-20">
-        <span className="font-futuristic text-[8px] tracking-[0.5em] uppercase text-white">Explore</span>
-        <div className="w-px h-16 bg-gradient-to-b from-white to-transparent" />
-      </motion.div>
     </section>
   );
 };
@@ -666,7 +545,7 @@ const SystemSection: React.FC = () => {
             <div key={i} className="bg-white p-12 hover:bg-black hover:text-white transition-all duration-500 group cursor-default">
               <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-500">{f.icon}</div>
               <h4 className="font-futuristic text-xl mb-4 uppercase tracking-tighter">{f.title}</h4>
-              <p className="opacity-60 group-hover:opacity-80 transition-opacity font-light leading-relaxed">{f.desc}</p>
+              <p className="opacity-60 group-hover:opacity-80 transition-opacity font-light">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -676,29 +555,25 @@ const SystemSection: React.FC = () => {
 };
 
 const PortfolioLanding: React.FC = () => (
-  <section id="portfolio-landing" className="py-32 md:py-48 border-y border-white/10 relative overflow-hidden bg-black text-white">
-    <div className="container mx-auto px-6 relative z-10">
+  <section id="portfolio-landing" className="py-32 md:py-48 border-y border-white/10 bg-black text-white">
+    <div className="container mx-auto px-6">
       <div className="text-center mb-24">
-        <h2 className="font-futuristic text-xs tracking-[0.5em] uppercase mb-4 opacity-30">Case Evidence</h2>
         <h3 className="text-4xl md:text-7xl font-futuristic font-black uppercase tracking-tighter">Market Dominance</h3>
       </div>
-      <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="max-w-6xl mx-auto bg-white/5 border border-white/10 p-8 md:p-20 flex flex-col lg:flex-row items-center gap-16 backdrop-blur-md">
+      <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="max-w-6xl mx-auto bg-[#0a0a0a] border border-white/10 p-8 md:p-16 flex flex-col lg:flex-row items-center gap-12">
         <div className="lg:w-1/2">
           <div className="mb-12 inline-block"><MyoLogo className="h-20 w-auto" /></div>
           <h4 className="font-futuristic text-4xl mb-6 uppercase tracking-tight">MyoProcess</h4>
-          <p className="text-xl text-white/40 mb-12 leading-relaxed font-light">
+          <p className="text-xl text-white/40 mb-12 font-light">
             Implemented acquisition framework, stabilizing monthly pipeline and unlocking scale.
           </p>
           <div className="p-10 border-l-4 border-white bg-white/5">
-            <div className="flex items-baseline gap-4 mb-2">
-              <span className="text-7xl font-futuristic font-black text-white leading-none">$20k</span>
-              <span className="text-white/40 uppercase text-[10px] tracking-[0.4em] font-futuristic">Revenue / Mo</span>
-            </div>
-            <p className="text-white/20 text-[10px] uppercase tracking-[0.5em] font-futuristic">Guaranteed Growth Results</p>
+            <span className="text-7xl font-futuristic font-black text-white">$20k</span>
           </div>
         </div>
-        <div className="lg:w-1/2 w-full relative aspect-square bg-white/5 border border-white/10 flex items-center justify-center group overflow-hidden">
-           <MyoLogo className="w-1/2 h-1/2 opacity-30 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000" />
+        <div className="lg:w-1/2 w-full relative aspect-square bg-[#080808] border border-white/5 flex items-center justify-center group overflow-hidden">
+           <MyoLogo className="w-1/2 h-1/2 relative z-10" />
+           <div className="absolute inset-4 border border-white/[0.03] pointer-events-none" />
         </div>
       </motion.div>
     </div>
@@ -709,15 +584,13 @@ const TeamLanding: React.FC = () => (
   <section id="team-landing" className="py-32 md:py-48 bg-black">
     <div className="container mx-auto px-6">
       <div className="flex flex-col items-center mb-28 text-white">
-        <h2 className="font-futuristic text-xs tracking-[0.5em] uppercase mb-4 opacity-30">The Architects</h2>
         <h3 className="text-4xl md:text-7xl font-futuristic font-black uppercase tracking-tighter">Leadership</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto">
         {TEAM.map((member, i) => (
           <div key={i} className="group text-center">
-            <div className="aspect-[4/5] bg-white/5 border border-white/10 flex items-center justify-center mb-10 overflow-hidden relative">
-              <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-700 mix-blend-difference" />
-              <span className="text-9xl font-futuristic font-black text-white/5 group-hover:text-black transition-colors duration-700 select-none">{member.initials}</span>
+            <div className="aspect-[4/5] bg-white/5 border border-white/10 flex items-center justify-center mb-10 overflow-hidden relative text-white">
+              <span className="text-9xl font-futuristic font-black text-white/5 group-hover:text-white/20 transition-all duration-700">{member.initials}</span>
             </div>
             <h4 className="font-futuristic text-2xl uppercase mb-2 text-white">{member.name}</h4>
             <p className="text-white/40 uppercase text-[10px] tracking-[0.5em] font-futuristic">{member.role}</p>
@@ -733,20 +606,11 @@ const ContactLanding: React.FC = () => (
     <div className="container mx-auto px-6">
       <div className="max-w-6xl mx-auto border border-black/10 p-12 md:p-32 bg-black/[0.02] relative overflow-hidden">
         <h2 className="font-futuristic text-4xl md:text-8xl font-black uppercase text-black leading-none mb-16 tracking-tighter">READY TO <br />CONNECT?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-end">
-          <div>
-            <p className="text-xl text-black/60 font-light mb-12 leading-relaxed">Join the elite network scaling with mathematical precision.</p>
-            <a href="mailto:info@automationgo.in" className="text-2xl md:text-3xl font-futuristic font-black text-black border-b-2 border-black hover:opacity-50 transition-all pb-3">info@automationgo.in</a>
-          </div>
-          <button className="w-full md:w-auto px-16 py-8 bg-black text-white font-futuristic text-xs tracking-[0.4em] uppercase hover:opacity-90 transition-all flex items-center justify-center gap-6 group">Begin Audit <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform" /></button>
-        </div>
+        <a href="mailto:info@automationgo.in" className="text-2xl md:text-3xl font-futuristic font-black text-black border-b-2 border-black hover:opacity-50 transition-all pb-3">info@automationgo.in</a>
       </div>
     </div>
-    <footer className="container mx-auto px-6 pt-32 pb-12 flex flex-col md:flex-row justify-between items-center border-t border-black/5 mt-20 gap-10">
-      <div className="flex items-center gap-6 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-        <InfinityLogo className="h-10 w-auto brightness-0" />
+    <footer className="container mx-auto px-6 pt-32 pb-12 flex justify-center border-t border-black/5 mt-20">
         <span className="font-futuristic text-[10px] tracking-[0.5em] uppercase text-black/40">© 2024 AutomationGo</span>
-      </div>
     </footer>
   </section>
 );
@@ -778,9 +642,6 @@ const App: React.FC = () => {
         {view === 'team' && <TeamPage key="team" onBack={() => setView('home')} />}
         {view === 'contact' && <ContactPage key="contact" onBack={() => setView('home')} />}
       </AnimatePresence>
-      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] bg-white/[0.02] rounded-full blur-[180px]" />
-      </div>
     </div>
   );
 };
