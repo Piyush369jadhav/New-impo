@@ -59,33 +59,41 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
   const rotDuration = 10;
 
   return (
-    <div className={`${className} flex justify-center items-center`}>
-      <svg viewBox="0 0 512 512" className="w-[85%] max-w-[480px] h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div className={`${className} flex justify-center items-center relative group`}>
+      {/* Background Grid & Technical Markings */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
+        <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="absolute top-0 left-0 w-full h-px bg-white/40" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-white/40" />
+        <div className="absolute top-0 left-0 w-px h-full bg-white/40" />
+        <div className="absolute top-0 right-0 w-px h-full bg-white/40" />
         
+        {/* Measurement Markings */}
+        <div className="absolute top-4 left-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Scale: 1:1.24 Protocol</div>
+        <div className="absolute bottom-4 right-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Grid_Ref: AX-902</div>
+        <div className="absolute top-1/2 -left-6 -translate-y-1/2 rotate-90 font-futuristic text-[6px] tracking-[1em] text-white/20">Y-AXIS SYNCHRONIZATION</div>
+        <div className="absolute top-1/2 -right-6 -translate-y-1/2 -rotate-90 font-futuristic text-[6px] tracking-[1em] text-white/20">THRUPUT MONITOR</div>
+      </div>
+
+      <svg viewBox="0 0 512 512" className="w-[85%] max-w-[520px] h-auto relative z-10" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* 1. CHASSIS INFRASTRUCTURE (FIXED) */}
         <g stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} opacity="0.8">
           <path d="M150 360H362V250L415 175L350 120H162L97 175L150 250V360Z" strokeLinejoin="round" />
-          
-          {/* Internal Cross-Braces (Structural connectivity) */}
           <line x1="150" y1="250" x2="362" y2="250" opacity="0.3" />
           <line x1="256" y1="120" x2="256" y2="360" opacity="0.3" />
-          
-          {/* Mounting Brackets for Drive Components */}
           <path d="M150 280 H200 M362 280 H312 M256 120 V195" opacity="0.6" strokeDasharray="none" />
-          
-          {/* PART 1: DIAGONAL CROSS-BRACING RIBS (Added complexity) */}
           <line x1="162" y1="120" x2="350" y2="360" opacity="0.1" />
           <line x1="350" y1="120" x2="162" y2="360" opacity="0.1" />
         </g>
 
-        {/* PART 2: BEARING HOUSINGS (Fixed circles at mounting points) */}
+        {/* 2. BEARING HOUSINGS */}
         <g stroke="white" strokeWidth="0.5" strokeDasharray="none" opacity="0.5">
           <circle cx="200" cy="280" r="28" />
           <circle cx="256" cy="195" r="18" />
           <circle cx="312" cy="280" r="22" />
         </g>
 
-        {/* 2. REINFORCED LOWER INTAKE BLOCK */}
+        {/* 3. REINFORCED LOWER INTAKE BLOCK */}
         <g transform="translate(180, 360)">
           <rect width="152" height="35" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
           <line x1="38" y1="0" x2="38" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
@@ -93,7 +101,7 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           <line x1="114" y1="0" x2="114" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
         </g>
 
-        {/* 3. DRIVE SYSTEM (Belt) */}
+        {/* 4. DRIVE SYSTEM (Belt) */}
         <motion.path 
           d="M200 256 L244 184 A14 14 0 0 1 268 184 L312 262 A18 18 0 0 1 312 298 L200 304 A24 24 0 0 1 200 256 Z"
           stroke="white" 
@@ -130,14 +138,10 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           </motion.g>
         </g>
 
-        {/* 4. PISTON ASSEMBLIES */}
-        {/* Left Piston */}
+        {/* 5. PISTON ASSEMBLIES */}
         <g transform="translate(138, 145) rotate(-45)">
           <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          
-          {/* PART 3: PISTON DAMPERS (Small rectangles inside guide) */}
           <rect x="-15" y="-10" width="30" height="5" stroke="white" strokeWidth="0.5" opacity="0.2" />
-          
           <line x1="-18" y1="-45" x2="-18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
           <line x1="18" y1="-45" x2="18" y2="100" stroke="white" strokeWidth="0.5" opacity="0.3" />
           <motion.g animate={{ y: [-15, 15, -15] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
@@ -146,7 +150,6 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           </motion.g>
         </g>
 
-        {/* Right Piston */}
         <g transform="translate(374, 145) rotate(45)">
           <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
           <rect x="-15" y="-10" width="30" height="5" stroke="white" strokeWidth="0.5" opacity="0.2" />
@@ -158,31 +161,19 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           </motion.g>
         </g>
 
-        {/* 5. ADDITIONAL FIXED COMPONENTS */}
-        {/* Central Core */}
+        {/* 6. CENTRAL CORE */}
         <g transform="translate(256, 280)">
           <rect x="-22" y="-22" width="44" height="44" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          
-          {/* PART 4: DATA BUS STRIP (Visual neural connector) */}
           <g transform="translate(0, -50)">
             <rect x="-2" y="0" width="4" height="20" fill="white" opacity="0.2" />
             <rect x="-2" y="5" width="4" height="2" fill="white" opacity="0.5" />
             <rect x="-2" y="10" width="4" height="2" fill="white" opacity="0.5" />
             <rect x="-2" y="15" width="4" height="2" fill="white" opacity="0.5" />
           </g>
-
-          <motion.circle 
-            r="10" 
-            fill="white" 
-            animate={{ opacity: [0.1, 0.4, 0.1], scale: [1, 1.2, 1] }} 
-            transition={{ duration: 3, repeat: Infinity }} 
-          />
-          
-          {/* PART 5: INTERNAL DRIVE SHAFT (Vertical connection) */}
+          <motion.circle r="10" fill="white" animate={{ opacity: [0.1, 0.4, 0.1], scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity }} />
           <line x1="0" y1="-22" x2="0" y2="-85" stroke="white" strokeWidth="1" opacity="0.4" />
         </g>
 
-        {/* PART 6: SUB-CORE PROCESSOR (Small component right of main core) */}
         <g transform="translate(305, 230)">
           <rect width="20" height="20" stroke="white" strokeWidth="0.5" strokeDasharray="1 1" opacity="0.4" />
           <line x1="0" y1="10" x2="20" y2="10" stroke="white" strokeWidth="0.5" opacity="0.2" />
@@ -199,13 +190,13 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           </g>
         </g>
 
-        {/* PART 7: INTERNAL MANIFOLD CURVES (Flow lines) */}
+        {/* Manifold Curves */}
         <g stroke="white" strokeWidth="0.5" opacity="0.15">
           <path d="M162 120 Q200 150, 240 195" />
           <path d="M350 120 Q312 150, 272 195" />
         </g>
 
-        {/* PART 8: MECHANICAL LINKAGE BARS (Fixed visualization) */}
+        {/* Mechanical Linkage */}
         <g stroke="white" strokeWidth="0.8" strokeDasharray="2 2" opacity="0.2">
           <line x1="200" y1="280" x2="150" y2="200" />
           <line x1="312" y1="280" x2="362" y2="200" />
@@ -215,12 +206,30 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
         <g transform="translate(200, 95)">
           <rect width="112" height="25" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
           <line x1="10" y1="12" x2="102" y2="12" stroke="white" strokeWidth="0.5" opacity="0.3" />
-          <motion.rect 
-            x="40" y="5" width="32" height="15" 
-            fill="white" 
-            animate={{ opacity: [0, 0.5, 0] }} 
-            transition={{ duration: 1.5, repeat: Infinity }} 
-          />
+          <motion.rect x="40" y="5" width="32" height="15" fill="white" animate={{ opacity: [0, 0.5, 0] }} transition={{ duration: 1.5, repeat: Infinity }} />
+        </g>
+
+        {/* 7. TECHNICAL CALLOUTS (Annotations around the engine) */}
+        <g font-family="Orbitron" font-size="6" fill="white" stroke="none">
+          {/* Callout 1: Connect Core */}
+          <line x1="256" y1="280" x2="480" y2="340" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
+          <circle cx="480" cy="340" r="2" fill="white" />
+          <text x="485" y="343" fill="white" opacity="0.8" text-anchor="start" transform="scale(1)">01. NEURAL BRIDGE</text>
+          
+          {/* Callout 2: Scale Manifold */}
+          <line x1="138" y1="145" x2="40" y2="60" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
+          <circle cx="40" cy="60" r="2" fill="white" />
+          <text x="35" y="55" fill="white" opacity="0.8" text-anchor="end">02. SCALE COMPRESSION</text>
+
+          {/* Callout 3: Drive Protocol */}
+          <line x1="200" y1="300" x2="60" y2="400" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
+          <circle cx="60" cy="400" r="2" fill="white" />
+          <text x="55" y="415" fill="white" opacity="0.8" text-anchor="end">03. KINETIC REVENUE DRIVE</text>
+          
+          {/* Callout 4: Client Intake */}
+          <line x1="415" y1="175" x2="480" y2="120" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
+          <circle cx="480" cy="120" r="2" fill="white" />
+          <text x="485" y="115" fill="white" opacity="0.8" text-anchor="start">04. CLIENT ABSORPTION PORT</text>
         </g>
 
         {/* Structural Wiring Conduits */}
@@ -229,8 +238,32 @@ const TechnicalEngine = ({ className }: { className?: string }) => {
           <path d="M362 250 Q412 200, 415 175" />
           <path d="M256 360 Q256 320, 256 302" />
         </g>
-
       </svg>
+      
+      {/* HUD Corners (Telemetry Readouts) */}
+      <div className="absolute top-0 left-0 p-8 space-y-4 hidden lg:block">
+        <div className="flex items-center gap-3">
+          <div className="w-1 h-1 bg-white animate-pulse" />
+          <span className="font-futuristic text-[8px] tracking-widest text-white/60">SYS_AUTH: VERIFIED</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="w-24 h-px bg-white/20" />
+          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">LATENCY: 0.04ms</span>
+          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">ENCRYPTION: AES-X</span>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 right-0 p-8 text-right space-y-4 hidden lg:block">
+        <div className="flex items-center gap-3 justify-end">
+          <span className="font-futuristic text-[8px] tracking-widest text-white/60">THRUPUT_INDEX: 99.4%</span>
+          <div className="w-1 h-1 bg-white animate-pulse" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="w-32 h-px bg-white/20 ml-auto" />
+          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">PROTOCOL: CONN_8.1</span>
+          <span className="font-futuristic text-[6px] text-white/30 tracking-widest">TARGET_YIELD: +$10M</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -494,7 +527,7 @@ const SystemPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <PageWrapper title="The System" subtitle="Connector Protocols" onBack={onBack}>
     <div className="space-y-32">
       <div className="relative">
-        <TechnicalEngine className="w-full h-auto max-w-4xl mx-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.05)]" />
+        <TechnicalEngine className="w-full h-auto max-w-5xl mx-auto drop-shadow-[0_0_20px_rgba(255,255,255,0.05)]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
           <h4 className="font-futuristic text-[10px] tracking-[0.8em] uppercase text-white/10">Synchronized Engine Matrix</h4>
         </div>
