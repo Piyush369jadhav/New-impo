@@ -1,243 +1,268 @@
-
-import React, { useEffect, useState, memo } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useSpring, useInView } from 'framer-motion';
 import { 
   ArrowRight, 
   Zap, 
-  ShieldCheck, 
-  Users, 
   Cpu, 
   Menu,
   X,
   Target,
-  Link2,
-  TrendingUp,
   ArrowLeft,
-  CheckCircle2,
   Activity,
-  Layers,
   Globe,
-  BarChart3
+  Database,
+  Search,
+  CheckCircle,
+  Network,
+  Terminal,
+  Layers,
+  BarChart3,
+  ShieldAlert,
+  HardDrive,
+  Linkedin
 } from 'lucide-react';
 
 // --- Types ---
 type ViewType = 'home' | 'vision' | 'system' | 'portfolio' | 'team' | 'contact';
 
-// --- Components ---
+// --- Constants ---
+const TEAM = [
+  { 
+    name: 'Piyush Jadhav', 
+    role: 'Chief Strategist', 
+    initials: 'PJ', 
+    loc: '010.012',
+    bio: 'Specialist in high-velocity sales architecture and lead generation logic. Orchestrates the primary connection protocols.',
+    linkedin: 'https://www.linkedin.com/in/piyush-jadhav-70b234397?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B1XKdYBO2RouPVU3uy7Vj3A%3D%3D'
+  },
+  { 
+    name: 'Manas Ghate', 
+    role: 'Growth Architect', 
+    initials: 'MG', 
+    loc: '010.044',
+    bio: 'Expert in operational scaling and market penetration strategies. Manages the execution loop and revenue optimization.'
+  },
+  { 
+    name: 'Dnyaneshwar Jadhav', 
+    role: 'Systems Lead', 
+    initials: 'DJ', 
+    loc: '010.089',
+    bio: 'Oversees the technical backend and AI-driven outreach infrastructure. Ensures 99.9% protocol stability.'
+  },
+];
+
+// --- Sub-Components ---
+
+const CyberBackground = () => (
+  <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-30">
+    <div 
+      className="absolute inset-0" 
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px'
+      }} 
+    />
+    <motion.div 
+      animate={{ y: ['-100%', '100%'] }} 
+      transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+      className="absolute left-[10%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"
+    />
+    <motion.div 
+      animate={{ y: ['100%', '-100%'] }} 
+      transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+      className="absolute right-[20%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"
+    />
+    {[...Array(20)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute w-1 h-1 bg-white rounded-full opacity-20"
+        initial={{ 
+          x: Math.random() * 100 + '%', 
+          y: Math.random() * 100 + '%',
+          scale: Math.random() * 2
+        }}
+        animate={{ 
+          y: [null, '-20%'],
+          opacity: [0, 0.4, 0]
+        }}
+        transition={{ 
+          duration: 5 + Math.random() * 10, 
+          repeat: Infinity, 
+          delay: Math.random() * 5 
+        }}
+      />
+    ))}
+  </div>
+);
+
+const MetadataLabel = ({ children, active }: { children?: React.ReactNode, active?: boolean }) => (
+  <div className="font-mono text-[9px] tracking-[0.2em] text-white/30 uppercase flex items-center gap-2 mb-2">
+    <div className={`w-1 h-1 rounded-full ${active ? 'bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]' : 'bg-white/40'}`} />
+    {children}
+  </div>
+);
 
 const InfinityLogo = ({ className, pulsing = false }: { className?: string; pulsing?: boolean }) => (
   <motion.svg 
     viewBox="0 0 100 60" 
     className={className}
     animate={pulsing ? { 
-      scale: [1, 1.05, 1],
-      filter: ["brightness(100%) saturate(1.2)", "brightness(160%) saturate(1.5)", "brightness(100%) saturate(1.2)"]
+      filter: ["brightness(100%) blur(0px)", "brightness(180%) blur(1px)", "brightness(100%) blur(0px)"]
     } : {}}
-    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
   >
-    <defs>
-      <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 1 }} />
-        <stop offset="100%" style={{ stopColor: '#888888', stopOpacity: 1 }} />
-      </linearGradient>
-      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur stdDeviation="3" result="blur" />
-        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-      </filter>
-    </defs>
     <path 
       d="M30,20 C10,20 10,40 30,40 C40,40 45,35 50,30 C55,25 60,20 70,20 C90,20 90,40 70,40 C60,40 55,35 50,30 C45,25 40,20 30,20 Z" 
       fill="none" 
-      stroke="url(#logoGradient)" 
-      strokeWidth="10" 
+      stroke="white" 
+      strokeWidth="4" 
       strokeLinecap="round"
-      filter="url(#glow)"
+      opacity="0.8"
     />
   </motion.svg>
 );
 
-const TechnicalEngine = ({ className }: { className?: string }) => {
-  const bStroke = "1";
-  const dPattern = "4 3";
-  const rotDuration = 10;
-
+const ConnectorVisualization = () => {
   return (
-    <div className={`${className} flex justify-center items-center relative group`}>
-      {/* Background Grid & Technical Markings */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute top-0 left-0 w-full h-full" style={{ backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        <div className="absolute top-0 left-0 w-full h-px bg-white/40" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-white/40" />
-        <div className="absolute top-0 left-0 w-px h-full bg-white/40" />
-        <div className="absolute top-0 right-0 w-px h-full bg-white/40" />
-        
-        {/* Measurement Markings */}
-        <div className="absolute top-4 left-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Scale: 1:1.24 Protocol</div>
-        <div className="absolute bottom-4 right-4 font-futuristic text-[8px] uppercase tracking-widest text-white/40">Grid_Ref: AX-902</div>
+    <div className="relative flex justify-center items-center py-32 bg-black/40 border border-white/5 rounded-3xl overflow-hidden glass-panel">
+      <div className="absolute top-6 left-8 flex flex-col gap-2">
+        <MetadataLabel active>PROCESS_NEXUS: ONLINE</MetadataLabel>
+        <MetadataLabel active>CALIBRATION: ACTIVE</MetadataLabel>
       </div>
+      
+      <svg viewBox="0 0 800 500" className="w-full max-w-5xl h-auto drop-shadow-[0_0_40px_rgba(34,197,94,0.1)]" fill="none">
+        {/* Background Grids & Circles */}
+        <motion.circle 
+          cx="400" cy="250" r="180" stroke="white" strokeWidth="0.5" strokeDasharray="10 20" opacity="0.1"
+          animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.circle 
+          cx="400" cy="250" r="140" stroke="#22c55e" strokeWidth="0.5" strokeDasharray="5 5" opacity="0.1"
+          animate={{ rotate: -360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+        />
 
-      <svg viewBox="0 0 512 512" className="w-[85%] max-w-[520px] h-auto relative z-10" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* 1. CHASSIS INFRASTRUCTURE (RESTORED) */}
-        <g stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} opacity="0.8">
-          <path d="M150 360H362V250L415 175L350 120H162L97 175L150 250V360Z" strokeLinejoin="round" />
-          <line x1="150" y1="250" x2="362" y2="250" opacity="0.3" />
-          <line x1="256" y1="120" x2="256" y2="360" opacity="0.3" />
-          <path d="M150 280 H200 M362 280 H312 M256 120 V195" opacity="0.6" strokeDasharray="none" />
-          <line x1="162" y1="120" x2="350" y2="360" opacity="0.1" />
-          <line x1="350" y1="120" x2="162" y2="360" opacity="0.1" />
+        {/* Central Core */}
+        <g>
+          <rect x="340" y="190" width="120" height="120" stroke="white" strokeWidth="2" opacity="0.8" />
+          <motion.rect 
+            x="350" y="200" width="100" height="100" stroke="#22c55e" strokeWidth="0.5" opacity="0.2"
+            animate={{ opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 2, repeat: Infinity }}
+          />
+          <text x="400" y="245" fill="white" fontSize="14" fontFamily="Orbitron" textAnchor="middle" fontWeight="bold">AG_HUB</text>
+          <text x="400" y="265" fill="#22c55e" fontSize="7" fontFamily="JetBrains Mono" textAnchor="middle" opacity="0.8" letterSpacing="0.2em">NEXUS_SYNC</text>
         </g>
 
-        {/* 2. BEARING HOUSINGS */}
-        <g stroke="white" strokeWidth="0.5" strokeDasharray="none" opacity="0.5">
-          <circle cx="200" cy="280" r="28" />
-          <circle cx="256" cy="195" r="18" />
-          <circle cx="312" cy="280" r="22" />
-        </g>
+        {/* External Interaction Points */}
+        {[
+          { x: 120, y: 150, label: "INBOUND" },
+          { x: 120, y: 350, label: "DEMAND" },
+          { x: 680, y: 150, label: "CAPITAL" },
+          { x: 680, y: 350, label: "YIELD" }
+        ].map((node, i) => (
+          <g key={i}>
+            <rect x={node.x-40} y={node.y-30} width="80" height="60" stroke="white" strokeWidth="1" opacity="0.3" />
+            <text x={node.x} y={node.y+5} fill="white" fontSize="8" fontFamily="Orbitron" textAnchor="middle" opacity="0.6">{node.label}</text>
+            
+            {/* Animated Paths */}
+            <motion.path 
+              d={`M ${node.x} ${node.y} L 400 250`} 
+              stroke="white" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.1"
+            />
+            
+            {/* Moving Packets */}
+            <motion.circle 
+              r="2" fill="#22c55e"
+              initial={{ 
+                cx: node.x < 400 ? node.x : 400, 
+                cy: node.y < 250 ? node.y : 250 
+              }}
+              animate={{ 
+                cx: node.x < 400 ? 400 : node.x, 
+                cy: node.y < 250 ? 250 : node.y 
+              }}
+              transition={{ duration: 3 + i, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </g>
+        ))}
 
-        {/* 3. REINFORCED LOWER INTAKE BLOCK */}
-        <g transform="translate(180, 360)">
-          <rect width="152" height="35" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <line x1="38" y1="0" x2="38" y2="35" stroke="white" strokeWidth="0.5" strokeDasharray="1 2" opacity="0.4" />
-        </g>
-
-        {/* L-PULLEY UNIT (RESTORED) */}
-        <g transform="translate(200, 280)">
-          <motion.g animate={{ rotate: 360 }} transition={{ duration: rotDuration, repeat: Infinity, ease: "linear" }}>
-            <circle cx="0" cy="0" r="24" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-            <circle cx="0" cy="0" r="4" fill="white" />
-          </motion.g>
-          <text y="40" x="-30" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Outreach_Core</text>
-        </g>
-
-        {/* TOP-PULLEY UNIT (RESTORED) */}
-        <g transform="translate(256, 195)">
-          <motion.g animate={{ rotate: -360 }} transition={{ duration: rotDuration * 0.7, repeat: Infinity, ease: "linear" }}>
-            <circle cx="0" cy="0" r="14" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-            <circle cx="0" cy="0" r="3" fill="white" />
-          </motion.g>
-          <text y="-20" x="-20" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Logic_Filter</text>
-        </g>
-
-        {/* R-PULLEY UNIT (RESTORED) */}
-        <g transform="translate(312, 280)">
-          <motion.g animate={{ rotate: 360 }} transition={{ duration: rotDuration * 0.9, repeat: Infinity, ease: "linear" }}>
-            <circle cx="0" cy="0" r="18" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-            <circle cx="0" cy="0" r="3" fill="white" />
-          </motion.g>
-          <text y="40" x="0" fill="white" className="font-futuristic text-[6px] opacity-40 uppercase">Conv_Link</text>
-        </g>
-
-        {/* 5. PISTON ASSEMBLIES (RESTORED COMPLEXITY) */}
-        <g transform="translate(138, 145) rotate(-45)">
-          <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <motion.g animate={{ y: [-15, 15, -15] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-            <rect x="-24" y="-55" width="48" height="12" stroke="white" strokeWidth={bStroke} fill="black" />
-          </motion.g>
-        </g>
-
-        <g transform="translate(374, 145) rotate(45)">
-          <rect x="-18" y="-45" width="36" height="70" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <motion.g animate={{ y: [15, -15, 15] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-            <rect x="-24" y="-55" width="48" height="12" stroke="white" strokeWidth={bStroke} fill="black" />
-          </motion.g>
-        </g>
-
-        {/* 6. CENTRAL CORE */}
-        <g transform="translate(256, 280)">
-          <rect x="-22" y="-22" width="44" height="44" stroke="white" strokeWidth={bStroke} strokeDasharray={dPattern} />
-          <motion.circle r="10" fill="white" animate={{ opacity: [0.1, 0.4, 0.1], scale: [1, 1.2, 1] }} transition={{ duration: 3, repeat: Infinity }} />
-        </g>
-
-        {/* 7. TECHNICAL CALLOUTS (RESTORED) */}
-        <g font-family="Orbitron" font-size="6" fill="white" stroke="none">
-          <line x1="256" y1="280" x2="480" y2="340" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
-          <circle cx="480" cy="340" r="2" fill="white" />
-          <text x="485" y="343" fill="white" opacity="0.8" text-anchor="start">01. NEURAL BRIDGE</text>
-          
-          <line x1="200" y1="280" x2="50" y2="340" stroke="white" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.5" />
-          <circle cx="50" cy="340" r="2" fill="white" />
-          <text x="45" y="343" fill="white" opacity="0.8" text-anchor="end">02. CLIENT_SYNC</text>
+        {/* Access & Rev Share Connectors */}
+        <g opacity="0.7">
+          <path d="M 200 250 L 340 250" stroke="#22c55e" strokeWidth="1" strokeDasharray="2 6" opacity="0.4" />
+          <path d="M 460 250 L 600 250" stroke="#22c55e" strokeWidth="1" strokeDasharray="2 6" opacity="0.4" />
+          <rect x="150" y="235" width="60" height="30" stroke="white" strokeWidth="0.5" opacity="0.4" />
+          <text x="180" y="255" fill="white" fontSize="6" fontFamily="JetBrains Mono" textAnchor="middle">ACCESS</text>
+          <rect x="590" y="235" width="60" height="30" stroke="white" strokeWidth="0.5" opacity="0.4" />
+          <text x="620" y="255" fill="white" fontSize="6" fontFamily="JetBrains Mono" textAnchor="middle">REV_SHARE</text>
         </g>
       </svg>
     </div>
   );
 };
 
-const MyoLogo = ({ className }: { className?: string }) => (
-  <motion.svg 
-    viewBox="0 0 100 100" 
-    className={className}
-    initial={{ opacity: 0, scale: 0.8 }}
-    whileInView={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.8 }}
-  >
-    <path 
-      d="M50,20 L30,40 L35,45 L50,30 L65,45 L70,40 Z M50,40 L20,70 L30,80 L50,60 L70,80 L80,70 Z" 
-      fill="white"
-    />
-    <path 
-      d="M50,15 L85,50 L50,85 L15,50 Z" 
-      fill="none" 
-      stroke="white" 
-      strokeWidth="1" 
-      strokeDasharray="4 4"
-      className="opacity-20"
-    />
-  </motion.svg>
-);
+const SectionHeading = ({ title, subtitle }: { title: string, subtitle: string }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
 
-// --- Constants & Data ---
-const TEAM = [
-  { name: 'Piyush Jadhav', role: 'Owner & Visionary', initials: 'PJ' },
-  { name: 'Manas Ghate', role: 'CCO - Growth Lead', initials: 'MG' },
-  { name: 'Dnyaneshwar Jadhav', role: 'CTO - Systems Architect', initials: 'DJ' },
-];
-
-// --- Sub-Components ---
+  return (
+    <div ref={ref} className="mb-20">
+      <MetadataLabel>{subtitle}</MetadataLabel>
+      <motion.h2 
+        initial={{ x: -20, opacity: 0 }}
+        animate={isInView ? { x: 0, opacity: 1 } : {}}
+        transition={{ duration: 0.8 }}
+        className="text-4xl md:text-7xl font-futuristic font-black uppercase tracking-tighter leading-none text-glow"
+      >
+        {title}
+      </motion.h2>
+    </div>
+  );
+};
 
 const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }> = ({ setView, currentView }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => { if (window.scrollY > 20) setScrolled(true); else setScrolled(false); };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    const handleScroll = () => { setScrolled(window.scrollY > 20); };
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const items: ViewType[] = ['vision', 'system', 'portfolio', 'team', 'contact'];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled || currentView !== 'home' ? 'bg-black/95 backdrop-blur-md border-b border-white/10 py-4 shadow-2xl shadow-black/50' : 'bg-transparent py-8'}`}>
+    <nav className={`fixed top-0 w-full z-[60] transition-all duration-700 ${scrolled || currentView !== 'home' ? 'bg-black/90 backdrop-blur-2xl border-b border-white/5 py-4' : 'bg-transparent py-10'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <motion.div 
-          onClick={() => setView('home')}
-          className="flex items-center gap-4 cursor-pointer group"
-        >
-          <div className="relative flex items-center justify-center">
-            <InfinityLogo className="h-10 md:h-12 w-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]" pulsing={true} />
+        <div onClick={() => setView('home')} className="flex items-center gap-3 cursor-pointer group">
+          <InfinityLogo className="h-6 md:h-10 w-auto" pulsing={currentView === 'home'} />
+          <div className="flex flex-col">
+             <span className="font-futuristic font-bold text-sm md:text-base tracking-[0.2em] text-white uppercase group-hover:text-glow transition-all">AutomationGo</span>
+             <span className="font-mono text-[7px] tracking-[0.4em] text-white/20 uppercase -mt-1 group-hover:text-white/40">v3.0.1_STABLE</span>
           </div>
-          <div className="flex flex-col overflow-hidden">
-            <span className="font-futuristic font-black text-xl tracking-tighter uppercase hidden md:block text-white leading-none">AutomationGo</span>
-            <span className="text-[8px] tracking-[0.4em] uppercase text-white/40 hidden md:block mt-1">Strategic Connector</span>
-          </div>
-        </motion.div>
+        </div>
         
-        <div className="hidden md:flex gap-10 font-futuristic text-[10px] tracking-[0.3em] uppercase text-white/70">
+        {/* Navigation items: Large size text-2xl as per previous request */}
+        <div className="hidden md:flex gap-16 font-mono text-2xl tracking-[0.3em] uppercase text-white/40">
           {items.map((item) => (
             <button 
               key={item} 
               onClick={() => setView(item)}
-              className={`hover:text-white transition-colors relative group ${currentView === item ? 'text-white' : ''}`}
+              className={`hover:text-white transition-all relative group flex items-center gap-4 ${currentView === item ? 'text-white' : ''}`}
             >
+              {currentView === item && (
+                <motion.div 
+                  layoutId="nav-dot" 
+                  className="w-2.5 h-2.5 bg-green-500 rounded-full shadow-[0_0_12px_#22c55e]" 
+                />
+              )}
               {item}
-              <span className={`absolute -bottom-2 left-0 h-px bg-white transition-all ${currentView === item ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              <span className={`absolute -bottom-2 left-0 h-0.5 bg-green-500/60 transition-all ${currentView === item ? 'w-full' : 'w-0 group-hover:w-full'}`} />
             </button>
           ))}
         </div>
 
-        <button className="md:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        <button className="md:hidden text-white/80 p-2" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
@@ -247,12 +272,12 @@ const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 bg-black z-[60] flex flex-col items-center justify-center gap-8 md:hidden font-futuristic text-xl tracking-widest uppercase text-white"
+            className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[70] flex flex-col items-center justify-center gap-10 md:hidden"
           >
-            <button className="absolute top-8 right-8" onClick={() => setIsOpen(false)}><X size={32} /></button>
-            <button onClick={() => { setView('home'); setIsOpen(false); }} className="hover:text-white/50 transition-colors">Home</button>
+            <button className="absolute top-8 right-8 text-white/40" onClick={() => setIsOpen(false)}><X size={32} /></button>
+            <button onClick={() => { setView('home'); setIsOpen(false); }} className="text-3xl font-futuristic text-white/80 uppercase tracking-widest">_Home</button>
             {items.map((item) => (
-              <button key={item} onClick={() => { setView(item); setIsOpen(false); }} className="hover:text-white/50 transition-colors">{item}</button>
+              <button key={item} onClick={() => { setView(item); setIsOpen(false); }} className="text-3xl font-futuristic text-white/80 uppercase tracking-widest">_{item}</button>
             ))}
           </motion.div>
         )}
@@ -261,39 +286,20 @@ const Navbar: React.FC<{ setView: (v: ViewType) => void, currentView: ViewType }
   );
 };
 
-const PageWrapper: React.FC<{ children: React.ReactNode, title: string, subtitle?: string, onBack: () => void }> = ({ children, title, subtitle, onBack }) => (
+const PageWrapper: React.FC<{ children: React.ReactNode, title: string, subtitle: string, onBack: () => void }> = ({ children, title, subtitle, onBack }) => (
   <motion.div 
-    initial={{ opacity: 0, scale: 1.05 }}
-    animate={{ opacity: 1, scale: 1 }}
-    exit={{ opacity: 0, scale: 0.95 }}
-    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-    className="min-h-screen bg-black text-white py-32 md:py-48 px-6 relative overflow-hidden"
+    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+    className="min-h-screen bg-black text-white pt-32 pb-24 px-6 relative z-10"
   >
-    <div className="absolute top-10 left-6 z-50">
-      <button onClick={onBack} className="flex items-center gap-2 font-futuristic text-[10px] tracking-[0.3em] uppercase opacity-40 hover:opacity-100 transition-all group">
-        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back
+    <div className="container mx-auto max-w-6xl">
+      <button onClick={onBack} className="group flex items-center gap-3 font-mono text-[10px] tracking-widest uppercase text-white/40 hover:text-white transition-all mb-16">
+        <div className="w-8 h-px bg-white/20 group-hover:w-12 group-hover:bg-green-500 transition-all" />
+        Return_to_Nexus
       </button>
-    </div>
-    
-    <div className="container mx-auto max-w-6xl relative z-10">
-      <div className="mb-20">
-        <motion.h1 
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-5xl md:text-8xl font-futuristic font-black uppercase tracking-tighter mb-6"
-        >
-          {title}
-        </motion.h1>
-        {subtitle && (
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl md:text-2xl text-white/40 font-light tracking-wide uppercase font-futuristic tracking-[0.2em]"
-          >
-            {subtitle}
-          </motion.p>
-        )}
+      
+      <div className="mb-24">
+        <MetadataLabel active>{subtitle}</MetadataLabel>
+        <h1 className="text-5xl md:text-9xl font-futuristic font-black uppercase tracking-tighter leading-none text-glow">{title}</h1>
       </div>
       {children}
     </div>
@@ -301,317 +307,148 @@ const PageWrapper: React.FC<{ children: React.ReactNode, title: string, subtitle
 );
 
 const VisionPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <PageWrapper title="Vision" subtitle="The Architecture of Scale" onBack={onBack}>
-    <div className="space-y-40">
-      {/* Serving Value Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-        <div className="space-y-10">
-          <div className="inline-flex items-center gap-3 px-6 py-2 border border-white/20 bg-white/5">
-            <CheckCircle2 size={16} className="text-white" />
-            <span className="font-futuristic text-[10px] tracking-[0.4em] uppercase">Value Protocol</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-futuristic font-bold uppercase leading-tight">Serving Value <br />To Capture Scale</h2>
-          <p className="text-white/50 text-xl font-light leading-relaxed">
-            We believe that profit is a byproduct of pure utility. Our connector vision isn't about mere transactions; it's about identifying gaps in high-potential businesses and bridging them with elite solutions. When we serve value, we secure longevity.
+  <PageWrapper title="Vision" subtitle="MANIFESTO_ARCH_2025" onBack={onBack}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
+      <div className="space-y-12">
+        <div className="glass-panel p-10 cyber-border">
+          <h2 className="text-2xl font-futuristic font-bold uppercase mb-6 tracking-tight">The Revenue Frontier</h2>
+          <p className="text-white/60 text-lg leading-relaxed font-light mb-8">
+            We don't just "find leads." We architect a digital expansion protocol that bridges the gap between high-level engineering solutions and desperate market demand. Our goal is a symbiotic partnership: we manage the grid, you deliver the excellence.
           </p>
-        </div>
-        
-        <div className="flex flex-col gap-8 justify-center">
-          <div className="p-8 border border-white/10 bg-white/[0.02]">
-            <h4 className="font-futuristic text-lg mb-4 uppercase text-white/80">Collective Growth</h4>
-            <p className="text-white/40 text-sm leading-relaxed">We don't grow alone. Our architecture is designed to lift every node in our network simultaneously.</p>
-          </div>
-          <div className="p-8 border border-white/10 bg-white/[0.02]">
-            <h4 className="font-futuristic text-lg mb-4 uppercase text-white/80">Impact Over Income</h4>
-            <p className="text-white/40 text-sm leading-relaxed">Focusing on the magnitude of the connection ensures the revenue follows naturally.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 10M Project Highlight */}
-      <section className="relative">
-        <div className="flex flex-col md:flex-row gap-16 items-center">
-          <div className="flex-1 space-y-12">
-            <div className="inline-flex items-center gap-3 px-6 py-2 border border-white/20 bg-white/5 backdrop-blur-xl">
-              <Activity size={18} className="text-white animate-pulse" />
-              <span className="font-futuristic text-[11px] tracking-[0.5em] uppercase text-white/80">Primary Objective</span>
-            </div>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-futuristic font-black uppercase tracking-tighter leading-[0.85] text-white">
-              THE <br />
-              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.9)] underline decoration-white/40 decoration-8 underline-offset-[20px]">
-                10M
-              </span> 
-              <br />PROJECT
-            </h2>
-            <p className="text-xl md:text-2xl text-white/40 font-light leading-relaxed max-w-xl">
-              Our target is to architect an ecosystem where our partner network reaches an aggregate revenue of <span className="text-white font-bold">$10,000,000</span> through our connector protocols.
-            </p>
-          </div>
-          
-          <div className="flex-1 relative flex justify-center">
-            <div className="relative w-full max-w-[500px] aspect-square bg-[#050505] border border-white/10 flex items-center justify-center group overflow-hidden">
-               {/* HUD Circles */}
-               <div className="absolute inset-0 pointer-events-none opacity-40">
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <motion.circle cx="50" cy="50" r="48" fill="none" stroke="white" strokeWidth="0.25" strokeDasharray="1 2" animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }} />
-                    <motion.circle cx="50" cy="50" r="44" fill="none" stroke="white" strokeWidth="1" strokeDasharray="10 6" animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} />
-                    <motion.circle cx="50" cy="50" r="40" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="4 4" animate={{ rotate: 360 }} transition={{ duration: 18, repeat: Infinity, ease: "linear" }} />
-                    <motion.circle cx="50" cy="50" r="34" fill="none" stroke="white" strokeWidth="2" strokeDasharray="2 30" animate={{ rotate: -360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} />
-                  </svg>
-               </div>
-               <div className="text-7xl md:text-[8rem] font-futuristic font-black text-white leading-none relative z-10">10M</div>
-               <div className="absolute top-6 left-6 w-6 h-6 border-t-2 border-l-2 border-white/60" />
-               <div className="absolute bottom-6 right-6 w-6 h-6 border-b-2 border-r-2 border-white/60" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* The Plan Section */}
-      <section className="space-y-24">
-        <h3 className="text-3xl md:text-5xl font-futuristic font-black uppercase tracking-tighter text-center">The Simple Plan</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {[
-            { step: "01", title: "Audit & Align", desc: "Identify key leverage points in your existing sales framework." },
-            { step: "02", title: "Bridge Construction", desc: "Connect your infrastructure to our proprietary high-yield networks." },
-            { step: "03", title: "Exponential Yield", desc: "Activate the sales system to capture guaranteed client volume." }
-          ].map((item, idx) => (
-            <div key={idx} className="p-10 border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all">
-              <span className="font-futuristic text-5xl text-white/10 mb-6 block">{item.step}</span>
-              <h4 className="font-futuristic text-xl mb-4 uppercase tracking-tighter">{item.title}</h4>
-              <p className="text-white/40 font-light leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  </PageWrapper>
-);
-
-const SystemPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <PageWrapper title="The System" subtitle="Connector Protocols" onBack={onBack}>
-    <div className="space-y-40">
-      <TechnicalEngine className="w-full h-auto max-w-5xl mx-auto" />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
-        <div className="space-y-8">
-          <h3 className="font-futuristic text-3xl uppercase tracking-tighter">Guaranteed Client System</h3>
-          <p className="text-white/50 text-lg leading-relaxed font-light">
-            Our system operates on a results-only logic. We don't sell 'leads' or 'clicks'. We deliver signed contracts and verified clients. The connection is the catalyst, but the system is the engine that keeps the fuel flowing.
-          </p>
-          <ul className="space-y-4">
-            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><ShieldCheck size={16} /> ZERO UPFRONT RISK</li>
-            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><Cpu size={16} /> AI-DRIVEN OUTREACH</li>
-            <li className="flex gap-4 items-center font-futuristic text-[10px] tracking-widest text-white/80"><Target size={16} /> TARGETED B2B MATCHING</li>
-          </ul>
-        </div>
-        
-        <div className="space-y-8">
-          <h3 className="font-futuristic text-3xl uppercase tracking-tighter">Connector Dynamics</h3>
-          <p className="text-white/50 text-lg leading-relaxed font-light">
-            We bridge the gap between businesses that have the 'Solution' and businesses that have the 'Pain'. AutomationGo sits at the nexus, managing the flow of data, trust, and capital.
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-             <div className="p-6 border border-white/10 bg-white/5">
-               <span className="block text-2xl font-black font-futuristic">98%</span>
-               <span className="text-[8px] uppercase tracking-widest text-white/40 font-futuristic">Match Accuracy</span>
+          <div className="flex gap-4">
+             <div className="flex-1 border-t border-white/10 pt-4">
+               <span className="font-mono text-[9px] text-white/20 block mb-1">NETWORK_VALUATION</span>
+               <span className="font-futuristic text-xl text-green-500/80">$10M+ ARCH</span>
              </div>
-             <div className="p-6 border border-white/10 bg-white/5">
-               <span className="block text-2xl font-black font-futuristic">14D</span>
-               <span className="text-[8px] uppercase tracking-widest text-white/40 font-futuristic">Avg Integration</span>
+             <div className="flex-1 border-t border-white/10 pt-4">
+               <span className="font-mono text-[9px] text-white/20 block mb-1">PARTNER_RETAINMENT</span>
+               <span className="font-futuristic text-xl text-green-500/80">94%</span>
              </div>
           </div>
         </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6">
+        {[
+          { icon: <Target className="w-5 h-5" />, label: "Target Saturation", desc: "Using deep-web data scrapers and intent signals to find high-intent prospects." },
+          { icon: <Network className="w-5 h-5" />, label: "Systemic Integration", desc: "Plugging your CRM directly into our automated outreach nexus for lead flow." },
+          { icon: <Zap className="w-5 h-5" />, label: "Viral Velocity", desc: "Scaling outreach volume by 500% within the first 30 days of activation." }
+        ].map((item, i) => (
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="flex gap-8 p-8 border border-white/5 hover:border-green-500/40 transition-all bg-white/[0.02] glass-panel"
+          >
+            <div className="shrink-0 p-3 bg-white/5 rounded-lg h-fit text-green-500/80">{item.icon}</div>
+            <div>
+              <h4 className="font-futuristic text-sm tracking-[0.2em] uppercase mb-3 text-white/90">{item.label}</h4>
+              <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   </PageWrapper>
 );
 
 const PortfolioPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <PageWrapper title="Portfolio" subtitle="Documented Success" onBack={onBack}>
-    <div className="space-y-32">
-      {/* Flagship Case Study */}
-      <section className="max-w-5xl mx-auto bg-[#0a0a0a] border border-white/10 p-8 md:p-16 flex flex-col lg:flex-row gap-16 items-center">
-         <div className="w-full lg:w-1/3 aspect-square shrink-0 flex items-center justify-center border border-white/5 bg-[#080808] relative group">
-            <MyoLogo className="w-2/3 h-auto relative z-10 transition-transform group-hover:scale-110 duration-700" />
-            <div className="absolute inset-4 border border-white/[0.03] pointer-events-none" />
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-futuristic text-[8px] tracking-[0.4em] opacity-40">FLAGSHIP_NODE</div>
-         </div>
-         
-         <div className="flex-1 space-y-10">
-           <div>
-             <span className="font-futuristic text-[10px] tracking-[0.5em] text-white/30 uppercase mb-4 block">Case Study_01</span>
-             <h3 className="font-futuristic text-5xl uppercase mb-4 tracking-tighter">MyoProcess</h3>
-             <p className="text-white/40 text-xl font-light leading-relaxed">
-               A comprehensive overhaul of B2B acquisition strategies, connecting their operational backend with high-tier corporate clients.
-             </p>
-           </div>
-           
-           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 border-t border-white/10 pt-10">
-             <div>
-               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Dec Yield</span>
-               <span className="text-4xl font-black font-futuristic">$20,000</span>
-             </div>
-             <div>
-               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Efficiency</span>
-               <span className="text-4xl font-black font-futuristic">+40%</span>
-             </div>
-             <div className="hidden md:block">
-               <span className="text-[10px] font-futuristic text-white/30 uppercase block mb-1">Status</span>
-               <span className="text-4xl font-black font-futuristic">SCALED</span>
-             </div>
-           </div>
-
-           <div className="flex gap-4">
-              <button className="flex items-center gap-3 px-8 py-4 border border-white/20 font-futuristic text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-all">
-                Access Dossier <ArrowRight size={14} />
-              </button>
-           </div>
-         </div>
-      </section>
-    </div>
-  </PageWrapper>
-);
-
-const TeamPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <PageWrapper title="The Team" subtitle="Elite Architects" onBack={onBack}>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-      {TEAM.map((member, i) => (
-        <div key={i} className="group">
-           <div className="aspect-[3/4] bg-white/5 border border-white/10 flex items-center justify-center relative overflow-hidden mb-8">
-              <span className="text-8xl font-futuristic font-black text-white/5 group-hover:text-white/20 transition-all duration-700">{member.initials}</span>
-           </div>
-           <h4 className="font-futuristic text-2xl uppercase tracking-tighter mb-2">{member.name}</h4>
-           <p className="text-white/40 text-[10px] tracking-[0.5em] uppercase font-futuristic">{member.role}</p>
-        </div>
+  <PageWrapper title="Cases" subtitle="DEPLOYMENT_DATA_STREAM" onBack={onBack}>
+    <div className="space-y-12">
+      {[
+        {
+          name: "MyoProcess",
+          tag: "NODE_ALPHA",
+          desc: "Complete transformation of a manual intake system into a 'Revenue Hub.'",
+          metrics: { rev: "$20k+", efficiency: "+340%", timeline: "90 Days" }
+        }
+      ].map((item, i) => (
+        <motion.div 
+          key={i}
+          className="glass-panel cyber-border p-12 relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 p-8 opacity-[0.03] text-green-500">
+            <Terminal size={150} />
+          </div>
+          <div className="max-w-4xl relative z-10">
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <h3 className="text-4xl md:text-6xl font-futuristic font-black uppercase tracking-tighter">{item.name}</h3>
+              <span className="px-3 py-1 bg-green-500/10 text-green-500 rounded text-[9px] font-mono tracking-widest uppercase border border-green-500/20">{item.tag}</span>
+            </div>
+            <p className="text-white/50 text-xl font-light leading-relaxed mb-12">
+              {item.desc}
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-8 border-t border-white/10">
+              <div>
+                <span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Yield_Increase</span>
+                <span className="text-2xl font-bold font-futuristic text-green-500/80">{item.metrics.rev}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Efficiency</span>
+                <span className="text-2xl font-bold font-futuristic">{item.metrics.efficiency}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Deployment</span>
+                <span className="text-2xl font-bold font-futuristic">{item.metrics.timeline}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Status</span>
+                <span className="text-2xl font-bold font-futuristic text-green-500 shadow-[0_0_10px_#22c55e44]">OPTIMIZED</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       ))}
     </div>
   </PageWrapper>
 );
 
-const ContactPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <PageWrapper title="Contact" subtitle="Direct Line" onBack={onBack}>
-    <div className="max-w-2xl">
-      <a href="mailto:info@automationgo.in" className="text-3xl md:text-5xl font-futuristic font-black border-b-4 border-white pb-4 hover:opacity-50 transition-all block">
-        info@automationgo.in
-      </a>
+const Hero: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) => (
+  <section className="h-[105vh] w-full flex flex-col items-center justify-center bg-black relative overflow-hidden px-6 pb-20">
+    <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[900px] max-h-[900px] border border-white/10 rounded-full animate-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] border border-green-500/5 rounded-full" />
     </div>
-  </PageWrapper>
-);
-
-// --- Landing Page Sections ---
-
-const Hero: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) => {
-  return (
-    <section id="hero" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black">
-      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-10 pointer-events-none">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 100, repeat: Infinity, ease: "linear" }} className="w-full max-w-[1000px] flex items-center justify-center">
-          <InfinityLogo className="w-full opacity-10 blur-[1px]" />
-        </motion.div>
-      </div>
-      <div className="relative z-10 text-center px-6">
-        <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-futuristic font-black tracking-tighter leading-[0.85] mb-8 text-white">
-            SCALE <br />
-            <span className="text-white opacity-25 border-t border-b border-white/20 py-2 block uppercase">Without</span>
-            LIMITS
-          </h1>
-          <p className="max-w-2xl mx-auto text-white/40 text-lg md:text-xl font-light mb-12">
-            Architecting bridges between elite businesses using our Guaranteed Client System.
-          </p>
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-            <button onClick={() => setView('contact')} className="w-full md:w-auto px-12 py-6 bg-white text-black font-futuristic text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white border border-white transition-all duration-500">Get Started</button>
-            <button onClick={() => setView('portfolio')} className="w-full md:w-auto px-12 py-6 border border-white/20 hover:border-white transition-all duration-500 font-futuristic text-xs tracking-[0.3em] uppercase text-white">View Case Study</button>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
-const SystemSection: React.FC = () => {
-  const features = [
-    { title: 'Automated Outreach', desc: 'Proprietary algorithms that find and qualify your ideal client base.', icon: <Zap size={40} className="mb-4" /> },
-    { title: 'Guaranteed ROI', desc: 'We deliver guaranteed clients. No results, no fees.', icon: <ShieldCheck size={40} className="mb-4" /> },
-    { title: 'Global Connector', desc: 'Access elite networks across industries.', icon: <Users size={40} className="mb-4" /> },
-    { title: 'Neural Systems', desc: 'AI-driven sales funnels.', icon: <Cpu size={40} className="mb-4" /> }
-  ];
-  return (
-    <section id="system-landing" className="py-32 md:py-48 bg-white text-black">
-      <div className="container mx-auto px-6">
-        <h3 className="text-4xl md:text-7xl font-futuristic font-black leading-none uppercase mb-24">The Mechanism</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-black/10 border border-black/10">
-          {features.map((f, i) => (
-            <div key={i} className="bg-white p-12 hover:bg-black hover:text-white transition-all duration-500 group cursor-default">
-              <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-500">{f.icon}</div>
-              <h4 className="font-futuristic text-xl mb-4 uppercase tracking-tighter">{f.title}</h4>
-              <p className="opacity-60 group-hover:opacity-80 transition-opacity font-light">{f.desc}</p>
-            </div>
-          ))}
+    
+    <div className="relative z-10 text-center space-y-10">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }} 
+        animate={{ opacity: 1, scale: 1 }} 
+        transition={{ duration: 1.2, ease: "circOut" }}
+      >
+        <div className="flex justify-center mb-8">
+          <MetadataLabel active>ACCESS_FEE_MODEL_ACTIVE</MetadataLabel>
         </div>
-      </div>
-    </section>
-  );
-};
-
-const PortfolioLanding: React.FC = () => (
-  <section id="portfolio-landing" className="py-32 md:py-48 border-y border-white/10 bg-black text-white">
-    <div className="container mx-auto px-6">
-      <div className="text-center mb-24">
-        <h3 className="text-4xl md:text-7xl font-futuristic font-black uppercase tracking-tighter">Market Dominance</h3>
-      </div>
-      <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="max-w-6xl mx-auto bg-[#0a0a0a] border border-white/10 p-8 md:p-16 flex flex-col lg:flex-row items-center gap-12">
-        <div className="lg:w-1/2">
-          <div className="mb-12 inline-block"><MyoLogo className="h-20 w-auto" /></div>
-          <h4 className="font-futuristic text-4xl mb-6 uppercase tracking-tight">MyoProcess</h4>
-          <p className="text-xl text-white/40 mb-12 font-light">
-            Implemented acquisition framework, stabilizing monthly pipeline and unlocking scale.
-          </p>
-          <div className="p-10 border-l-4 border-white bg-white/5">
-            <span className="text-7xl font-futuristic font-black text-white">$20k</span>
-          </div>
-        </div>
-        <div className="lg:w-1/2 w-full relative aspect-square bg-[#080808] border border-white/5 flex items-center justify-center group overflow-hidden">
-           <MyoLogo className="w-1/2 h-1/2 relative z-10" />
-           <div className="absolute inset-4 border border-white/[0.03] pointer-events-none" />
+        <h1 className="text-6xl md:text-[11rem] font-futuristic font-black tracking-tighter leading-[0.85] mb-8">
+          ELITE <br />
+          <span className="text-white/20 font-light hover:text-white transition-all duration-1000 cursor-default uppercase">Connector</span>
+        </h1>
+        <p className="text-white/50 text-sm md:text-base font-mono tracking-[0.4em] uppercase max-w-3xl mx-auto mb-16 leading-relaxed px-4">
+          High-yield business expansion built on access-based infrastructure and performance revenue shares.
+        </p>
+        <div className="flex flex-col md:flex-row gap-6 justify-center">
+          <button 
+            onClick={() => setView('contact')} 
+            className="px-14 py-6 bg-white text-black font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-green-500 hover:text-white border border-white transition-all cyber-border"
+          >
+            Initiate_Nexus
+          </button>
+          <button 
+            onClick={() => setView('system')} 
+            className="px-14 py-6 border border-white/10 font-mono text-[10px] tracking-[0.4em] uppercase hover:border-green-500 hover:bg-green-500/5 transition-all cyber-border"
+          >
+            System_Manifesto
+          </button>
         </div>
       </motion.div>
     </div>
-  </section>
-);
 
-const TeamLanding: React.FC = () => (
-  <section id="team-landing" className="py-32 md:py-48 bg-black">
-    <div className="container mx-auto px-6">
-      <div className="flex flex-col items-center mb-28 text-white">
-        <h3 className="text-4xl md:text-7xl font-futuristic font-black uppercase tracking-tighter">Leadership</h3>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto">
-        {TEAM.map((member, i) => (
-          <div key={i} className="group text-center">
-            <div className="aspect-[4/5] bg-white/5 border border-white/10 flex items-center justify-center mb-10 overflow-hidden relative text-white">
-              <span className="text-9xl font-futuristic font-black text-white/5 group-hover:text-white/20 transition-all duration-700">{member.initials}</span>
-            </div>
-            <h4 className="font-futuristic text-2xl uppercase mb-2 text-white">{member.name}</h4>
-            <p className="text-white/40 uppercase text-[10px] tracking-[0.5em] font-futuristic">{member.role}</p>
-          </div>
-        ))}
-      </div>
+    <div className="absolute bottom-10 left-10 hidden md:block">
+      <MetadataLabel active>GEO: 19.0760° N, 72.8777° E</MetadataLabel>
     </div>
-  </section>
-);
-
-const ContactLanding: React.FC = () => (
-  <section id="contact-landing" className="py-32 md:py-48 bg-white text-black relative">
-    <div className="container mx-auto px-6">
-      <div className="max-w-6xl mx-auto border border-black/10 p-12 md:p-32 bg-black/[0.02] relative overflow-hidden">
-        <h2 className="font-futuristic text-4xl md:text-8xl font-black uppercase text-black leading-none mb-16 tracking-tighter">READY TO <br />CONNECT?</h2>
-        <a href="mailto:info@automationgo.in" className="text-2xl md:text-3xl font-futuristic font-black text-black border-b-2 border-black hover:opacity-50 transition-all pb-3">info@automationgo.in</a>
-      </div>
+    <div className="absolute bottom-10 right-10 hidden md:block">
+      <MetadataLabel active>UPLINK: ACTIVE_ENCRYPTED</MetadataLabel>
     </div>
-    <footer className="container mx-auto px-6 pt-32 pb-12 flex justify-center border-t border-black/5 mt-20">
-        <span className="font-futuristic text-[10px] tracking-[0.5em] uppercase text-black/40">© 2024 AutomationGo</span>
-    </footer>
   </section>
 );
 
@@ -623,27 +460,188 @@ const App: React.FC = () => {
   useEffect(() => { window.scrollTo(0, 0); }, [view]);
 
   return (
-    <div className="relative min-h-screen bg-black selection:bg-white selection:text-black overflow-x-hidden">
-      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-white z-[100] origin-left mix-blend-difference" style={{ scaleX }} />
+    <div className="relative min-h-screen bg-black selection:bg-green-500 selection:text-black">
+      <CyberBackground />
+      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-green-500 shadow-[0_0_10px_#22c55e] z-[100] origin-left" style={{ scaleX }} />
       <Navbar setView={setView} currentView={view} />
+      
       <AnimatePresence mode="wait">
-        {view === 'home' && (
-          <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.1 }} transition={{ duration: 0.6 }}>
+        {view === 'home' ? (
+          <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Hero setView={setView} />
-            <SystemSection />
-            <PortfolioLanding />
-            <TeamLanding />
-            <ContactLanding />
+            
+            <section className="py-48 bg-white text-black relative z-10">
+              <div className="container mx-auto px-6">
+                <SectionHeading title="The Architecture" subtitle="CORE_SYSTEM_MODULES" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-black/10 border border-black/10">
+                  {[
+                    { label: "Access Control", icon: <Cpu />, desc: "Structured entry fees that grant you access to our lead nexus." },
+                    { label: "Data Harvesting", icon: <Database />, desc: "Massive scale lead extraction and intent-based filtering." },
+                    { label: "Expansion Logic", icon: <Layers />, desc: "Scaling outreach volume by orders of magnitude in days." },
+                    { label: "RevShare Sync", icon: <Globe />, desc: "We align profit via revenue share on closed deals." }
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i} 
+                      whileHover={{ y: -5 }}
+                      className="bg-white p-14 hover:bg-black hover:text-white transition-all duration-500 group border border-transparent hover:border-green-500/20"
+                    >
+                      <div className="mb-10 opacity-30 group-hover:opacity-100 transition-opacity transform group-hover:scale-110 duration-500 group-hover:text-green-500">{item.icon}</div>
+                      <h4 className="font-futuristic text-xl mb-6 uppercase tracking-tighter group-hover:text-glow">{item.label}</h4>
+                      <p className="text-sm opacity-50 font-light group-hover:opacity-80 leading-relaxed">{item.desc}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section className="py-48 bg-black text-white relative z-10 border-y border-white/5">
+              <div className="container mx-auto px-6">
+                <div className="max-w-4xl mx-auto text-center space-y-16">
+                  <MetadataLabel active>PARTNERSHIP_PROTOCOL</MetadataLabel>
+                  <h2 className="text-4xl md:text-8xl font-futuristic font-black uppercase tracking-tighter text-glow">
+                    Aligned for <br />
+                    <span className="text-white/20">Success</span>
+                  </h2>
+                  <p className="max-w-3xl mx-auto text-white/40 text-lg md:text-xl font-light leading-relaxed">
+                    We charge an <span className="text-white font-bold">Access Fee</span> to setup your custom grid + a <span className="text-green-500 font-bold">Revenue Share</span> on every deal closed through our system.
+                  </p>
+                  <div className="flex justify-center pt-8">
+                     <button onClick={() => setView('contact')} className="group flex items-center gap-6 px-16 py-7 border border-white/20 hover:border-green-500 transition-all font-mono text-[11px] tracking-[0.5em] uppercase glass-panel">
+                       Establish_Uplink
+                       <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform group-hover:text-green-500" />
+                     </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer className="py-24 text-center relative z-10">
+              <div className="flex justify-center gap-12 mb-10 opacity-10">
+                <MetadataLabel active>SECURE_GRID_V3</MetadataLabel>
+                <MetadataLabel active>UPTIME_100%</MetadataLabel>
+              </div>
+              <span className="font-mono text-[9px] tracking-[0.6em] uppercase text-white/10">© 2025 AutomationGo | Strategic Connector</span>
+            </footer>
           </motion.div>
+        ) : (
+          <div key="page-content">
+            {view === 'vision' && <VisionPage onBack={() => setView('home')} />}
+            {view === 'system' && <SystemPage onBack={() => setView('home')} />}
+            {view === 'portfolio' && <PortfolioPage onBack={() => setView('home')} />}
+            {view === 'team' && <TeamPage onBack={() => setView('home')} />}
+            {view === 'contact' && <ContactPage onBack={() => setView('home')} />}
+          </div>
         )}
-        {view === 'vision' && <VisionPage key="vision" onBack={() => setView('home')} />}
-        {view === 'system' && <SystemPage key="system" onBack={() => setView('home')} />}
-        {view === 'portfolio' && <PortfolioPage key="portfolio" onBack={() => setView('home')} />}
-        {view === 'team' && <TeamPage key="team" onBack={() => setView('home')} />}
-        {view === 'contact' && <ContactPage key="contact" onBack={() => setView('home')} />}
       </AnimatePresence>
     </div>
   );
 };
+
+const SystemPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
+  <PageWrapper title="System" subtitle="ENGINEERING_SPEC_V3" onBack={onBack}>
+    <div className="space-y-32">
+      <ConnectorVisualization />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          { 
+            title: "Access & Setup", 
+            desc: "Baseline fee for mapping your market grid and deploying your custom nexus.", 
+            icon: <HardDrive />,
+            meta: "FEE_REQUIRED"
+          },
+          { 
+            title: "Operational Loop", 
+            desc: "Continuous, automated outreach campaigns fueled by internal data pools.", 
+            icon: <Activity />,
+            meta: "ACTIVE_STREAM"
+          },
+          { 
+            title: "Revenue Dividend", 
+            desc: "Percentage of every deal closed shared back to fuel grid optimization.", 
+            icon: <BarChart3 />,
+            meta: "REV_SHARE"
+          }
+        ].map((step, i) => (
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="p-12 border border-white/10 bg-white/[0.01] glass-panel cyber-border group hover:bg-green-500/[0.04] transition-colors"
+          >
+            <div className="flex justify-between items-start mb-10">
+              <div className="text-white/20 group-hover:text-green-500 transition-colors">{step.icon}</div>
+              <span className="font-mono text-[8px] tracking-widest text-white/20">{step.meta}</span>
+            </div>
+            <h3 className="font-futuristic text-xl uppercase mb-6 tracking-tight group-hover:text-glow">{step.title}</h3>
+            <p className="text-white/40 text-sm leading-relaxed font-light">{step.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </PageWrapper>
+);
+
+const TeamPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
+  <PageWrapper title="Elite" subtitle="CORE_OPERATORS" onBack={onBack}>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {TEAM.map((member, i) => (
+        <motion.div 
+          key={i} 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: i * 0.1 }}
+          className="group border border-white/5 p-12 bg-white/[0.01] glass-panel cyber-border hover:border-green-500/20 transition-all flex flex-col"
+        >
+          <div className="aspect-square bg-white/[0.02] mb-12 flex items-center justify-center relative overflow-hidden group-hover:bg-green-500/[0.05] transition-all">
+             <span className="text-9xl font-black font-futuristic text-white/[0.02] group-hover:text-green-500/10 transition-all duration-1000 select-none">{member.initials}</span>
+          </div>
+          <MetadataLabel active>LOC: {member.loc}</MetadataLabel>
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-futuristic text-3xl uppercase tracking-tighter group-hover:text-glow">{member.name}</h4>
+            {member.linkedin && (
+              <a 
+                href={member.linkedin} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="p-2 bg-white/5 hover:bg-green-500/20 text-white/40 hover:text-green-500 transition-all rounded-lg border border-white/10 hover:border-green-500/40"
+              >
+                <Linkedin size={20} />
+              </a>
+            )}
+          </div>
+          <p className="text-white/30 font-mono text-[9px] tracking-[0.4em] uppercase mb-8">{member.role}</p>
+          <p className="text-white/40 text-sm leading-relaxed font-light flex-grow">{member.bio}</p>
+        </motion.div>
+      ))}
+    </div>
+  </PageWrapper>
+);
+
+const ContactPage: React.FC<{ onBack: () => void }> = ({ onBack }) => (
+  <PageWrapper title="Link" subtitle="ESTABLISH_UPLINK" onBack={onBack}>
+    <div className="max-w-4xl py-24 glass-panel p-12 md:p-20 cyber-border">
+      <MetadataLabel active>SECURE_ENTRY_POINT</MetadataLabel>
+      <h3 className="font-futuristic text-3xl md:text-5xl uppercase mb-16 tracking-tighter text-white/80">Direct Terminal Access</h3>
+      <a href="mailto:info@automationgo.in" className="text-3xl md:text-7xl font-futuristic font-black border-b border-white/10 pb-8 hover:text-green-500/80 transition-all block text-glow truncate">
+        info@automationgo.in
+      </a>
+      <div className="mt-20 flex flex-wrap gap-12">
+        <div>
+          <span className="font-mono text-[10px] text-white/20 block mb-2 uppercase">Active</span>
+          <span className="font-futuristic text-xl text-green-500/80 flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]" />
+            24/7
+          </span>
+        </div>
+        <div>
+          <span className="font-mono text-[10px] text-white/20 block mb-2 uppercase">Status</span>
+          <span className="font-futuristic text-xl text-green-500/60">LISTENING...</span>
+        </div>
+      </div>
+    </div>
+  </PageWrapper>
+);
 
 export default App;
