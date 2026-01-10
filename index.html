@@ -19,14 +19,13 @@
         .font-futuristic { font-family: 'Orbitron', sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        ::selection { background: #fff; color: #000; }
+        ::selection { background: #22c55e; color: #000; }
 
-        /* Techy Background Effects */
         .scanline {
             width: 100%;
             height: 100px;
             z-index: 99;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0) 100%);
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(34, 197, 94, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
             opacity: 0.1;
             position: fixed;
             bottom: 100%;
@@ -39,7 +38,6 @@
             100% { bottom: -100px; }
         }
 
-        /* Glassmorphism for readability */
         .glass-panel {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -48,7 +46,7 @@
         }
 
         .text-glow {
-            text-shadow: 0 0 15px rgba(255,255,255,0.4);
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
         }
 
         .cyber-border {
@@ -59,37 +57,47 @@
             position: absolute;
             width: 10px;
             height: 10px;
-            border-color: rgba(255, 255, 255, 0.3);
+            border-color: rgba(34, 197, 94, 0.3);
             border-style: solid;
             transition: all 0.3s ease;
         }
         .cyber-border::before { top: 0; left: 0; border-width: 1px 0 0 1px; }
         .cyber-border::after { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
         .cyber-border:hover::before, .cyber-border:hover::after {
-            border-color: #fff;
+            border-color: #22c55e;
             width: 20px;
             height: 20px;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+
+        .shimmer {
+          background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
     </style>
-    <script>
-      window.process = { env: { NODE_ENV: 'production' } };
-    </script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Import Map -->
     <script type="importmap">
     {
       "imports": {
-        "react": "https://esm.sh/react@18.3.1",
-        "react-dom": "https://esm.sh/react-dom@18.3.1",
-        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom": "https://esm.sh/react-dom@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
         "framer-motion": "https://esm.sh/framer-motion@11.11.11?external=react,react-dom",
-        "lucide-react": "https://esm.sh/lucide-react@0.454.0?external=react,react-dom",
-        "react/": "https://esm.sh/react@18.3.1/",
-        "react-dom/": "https://esm.sh/react-dom@18.3.1/"
+        "lucide-react": "https://esm.sh/lucide-react@0.454.0?external=react,react-dom"
       }
     }
     </script>
@@ -97,6 +105,604 @@
 <body>
     <div class="scanline"></div>
     <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+
+    <script type="text/babel" data-type="module" data-presets="react">
+        /** @jsx React.createElement */
+        /** @jsxFrag React.Fragment */
+        import React, { useState, useEffect, useRef } from 'react';
+        import ReactDOM from 'react-dom/client';
+        import { motion, AnimatePresence } from 'framer-motion';
+        import { 
+          ArrowRight, Zap, Cpu, Menu, X, Target, ArrowLeft, Activity, 
+          Globe, Database, Search, CheckCircle, Network, Terminal, 
+          Layers, BarChart3, ShieldAlert, HardDrive, Linkedin, Coins,
+          Trophy, Workflow, Fingerprint, Eye, Radio, Share2
+        } from 'lucide-react';
+
+        const TEAM = [
+          { 
+            name: 'Piyush Jadhav', 
+            role: 'Chief Strategist', 
+            initials: 'PJ', 
+            loc: '010.012',
+            bio: 'Specialist in high-velocity sales architecture and lead generation logic. Orchestrates the primary connection protocols.',
+            linkedin: 'https://www.linkedin.com/in/piyush-jadhav-70b234397'
+          },
+          { 
+            name: 'Manas Ghate', 
+            role: 'Growth Architect', 
+            initials: 'MG', 
+            loc: '010.044',
+            bio: 'Expert in operational scaling and market penetration strategies. Manages the execution loop and revenue optimization.',
+            linkedin: 'https://www.linkedin.com/in/manas-ghate-b502aa253?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'
+          },
+          { 
+            name: 'Dnyaneshwar Jadhav', 
+            role: 'Systems Lead', 
+            initials: 'DJ', 
+            loc: '010.089',
+            bio: 'Oversees the technical backend and AI-driven outreach infrastructure. Ensures 99.9% protocol stability.'
+          },
+        ];
+
+        const CyberBackground = () => (
+          <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-30">
+            <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+            <motion.div animate={{ y: ['-100%', '100%'] }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }} className="absolute left-[10%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            <motion.div animate={{ y: ['100%', '-100%'] }} transition={{ duration: 25, repeat: Infinity, ease: 'linear' }} className="absolute right-[20%] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+          </div>
+        );
+
+        const MetadataLabel = ({ children, active }) => (
+          <div className="font-mono text-[9px] tracking-[0.2em] text-white/30 uppercase flex items-center gap-2 mb-2">
+            <div className={`w-1 h-1 rounded-full ${active ? 'bg-green-500 animate-pulse shadow-[0_0_5px_#22c55e]' : 'bg-white/40'}`} />
+            {children}
+          </div>
+        );
+
+        const InfinityLogo = ({ className, pulsing }) => (
+          <motion.svg viewBox="0 0 100 60" className={className} animate={pulsing ? { filter: ["brightness(100%)", "brightness(180%)", "brightness(100%)"] } : {}} transition={{ duration: 4, repeat: Infinity }}>
+            <path d="M30,20 C10,20 10,40 30,40 C40,40 45,35 50,30 C55,25 60,20 70,20 C90,20 90,40 70,40 C60,40 55,35 50,30 C45,25 40,20 30,20 Z" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+          </motion.svg>
+        );
+
+        const ConnectorVisualization = () => (
+          <div className="relative flex justify-center items-center py-20 bg-black/60 border border-white/5 rounded-3xl overflow-hidden glass-panel h-[600px] w-full cyber-border group">
+            <div className="absolute top-6 left-8 flex flex-col gap-2 z-20">
+              <MetadataLabel active>NEURAL_NEXUS: ONLINE</MetadataLabel>
+              <MetadataLabel active>SYNC_LOAD: 14%</MetadataLabel>
+            </div>
+            
+            <div className="relative w-full h-full flex items-center justify-center">
+                {/* Background Rotating Grids */}
+                <motion.div 
+                    className="absolute w-[800px] h-[800px] border border-white/5 rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.div 
+                    className="absolute w-[600px] h-[600px] border border-green-500/5 rounded-full"
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                />
+
+                {/* Central Nexus Core */}
+                <div className="relative z-10 flex flex-col items-center">
+                    <motion.div 
+                        className="w-32 h-32 glass-panel border border-green-500/30 flex items-center justify-center relative shadow-[0_0_40px_rgba(34,197,94,0.1)]"
+                        animate={{ 
+                            boxShadow: ["0 0 20px rgba(34,197,94,0.1)", "0 0 60px rgba(34,197,94,0.3)", "0 0 20px rgba(34,197,94,0.1)"],
+                            scale: [1, 1.05, 1]
+                        }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                    >
+                        <div className="absolute inset-0 shimmer opacity-10" />
+                        <Activity className="text-green-500 w-12 h-12" />
+                    </motion.div>
+                    <span className="font-futuristic text-[10px] text-green-500 tracking-[0.5em] mt-6 uppercase text-glow">AG_HUB_v3</span>
+                </div>
+
+                {/* Data Packets and Paths */}
+                <svg viewBox="0 0 800 600" className="absolute inset-0 w-full h-full pointer-events-none">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="transparent" />
+                            <stop offset="50%" stopColor="#22c55e" />
+                            <stop offset="100%" stopColor="transparent" />
+                        </linearGradient>
+                    </defs>
+
+                    {[ 
+                        { x1: 150, y1: 150, label: "INBOUND" }, 
+                        { x1: 150, y1: 450, label: "DEMAND" }, 
+                        { x1: 650, y1: 150, label: "CAPITAL" }, 
+                        { x1: 650, y1: 450, label: "YIELD" } 
+                    ].map((node, i) => {
+                        const isLeft = node.x1 < 400;
+                        return (
+                            <g key={i}>
+                                {/* Connection Path */}
+                                <motion.path 
+                                    d={`M ${node.x1} ${node.y1} L 400 300`} 
+                                    stroke="white" 
+                                    strokeWidth="0.5" 
+                                    opacity="0.1" 
+                                />
+
+                                {/* Moving Data Packet */}
+                                <motion.circle 
+                                    r="2" 
+                                    fill="#22c55e"
+                                    animate={{ 
+                                        cx: isLeft ? [node.x1, 400] : [400, node.x1], 
+                                        cy: isLeft ? [node.y1, 300] : [300, node.y1],
+                                        opacity: [0, 1, 0] 
+                                    }}
+                                    transition={{ 
+                                        duration: 3 + i, 
+                                        repeat: Infinity, 
+                                        ease: "easeInOut",
+                                        delay: i * 0.5
+                                    }}
+                                />
+
+                                {/* Node Label UI */}
+                                <foreignObject x={node.x1 - 60} y={node.y1 - 40} width="120" height="80">
+                                    <div className="flex flex-col items-center justify-center p-4 border border-white/5 bg-black/40 backdrop-blur-sm group-hover:border-green-500/20 transition-all">
+                                        <div className="w-1 h-1 bg-green-500/60 mb-2" />
+                                        <span className="font-futuristic text-[8px] text-white/40 tracking-widest uppercase mb-1">{node.label}</span>
+                                        <span className="font-mono text-[6px] text-green-500/40 uppercase">active_link</span>
+                                    </div>
+                                </foreignObject>
+                            </g>
+                        );
+                    })}
+                </svg>
+            </div>
+
+            <div className="absolute bottom-6 right-8 flex gap-4">
+                <div className="flex flex-col items-end">
+                    <span className="font-mono text-[8px] text-white/20 uppercase">Core_Temp</span>
+                    <span className="font-mono text-[10px] text-green-500/60 uppercase">34.2°C</span>
+                </div>
+            </div>
+          </div>
+        );
+
+        const Navbar = ({ setView, currentView }) => {
+          const [isOpen, setIsOpen] = useState(false);
+          const [scrolled, setScrolled] = useState(false);
+          useEffect(() => {
+            const handleScroll = () => setScrolled(window.scrollY > 20);
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+          }, []);
+          const items = ['vision', 'system', 'pricing', 'portfolio', 'team', 'contact'];
+          return (
+            <nav className={`fixed top-0 w-full z-[60] transition-all duration-700 ${scrolled || currentView !== 'home' ? 'bg-black/90 backdrop-blur-2xl border-b border-white/5 py-4' : 'bg-transparent py-10'}`}>
+              <div className="container mx-auto px-6 flex justify-between items-center">
+                <div onClick={() => setView('home')} className="flex items-center gap-3 cursor-pointer group">
+                  <InfinityLogo className="h-6 md:h-10 w-auto" pulsing={currentView === 'home'} />
+                  <div className="flex flex-col">
+                    <span className="font-futuristic font-bold text-sm md:text-base tracking-[0.2em] text-white uppercase group-hover:text-glow transition-all">AutomationGo</span>
+                    <span className="font-mono text-[7px] tracking-[0.4em] text-white/20 uppercase -mt-1 group-hover:text-white/40">v3.0.1_STABLE</span>
+                  </div>
+                </div>
+                <div className="hidden md:flex gap-10 lg:gap-16 font-mono text-[10px] tracking-[0.3em] uppercase text-white/40">
+                  {items.map((item) => (
+                    <button key={item} onClick={() => setView(item)} className={`hover:text-white transition-all relative group flex items-center gap-4 ${currentView === item ? 'text-white' : ''}`}>
+                      {currentView === item && <motion.div layoutId="nav-dot" className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_12px_#22c55e]" />}
+                      {item}
+                    </button>
+                  ))}
+                </div>
+                <button className="md:hidden text-white/80 p-2" onClick={() => setIsOpen(!isOpen)}>{isOpen ? <X size={28} /> : <Menu size={28} />}</button>
+              </div>
+              <AnimatePresence>{isOpen && (
+                <motion.div initial={{ opacity: 0, x: '100%' }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: '100%' }} className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[70] flex flex-col items-center justify-center gap-10 md:hidden">
+                  <button className="absolute top-8 right-8 text-white/40" onClick={() => setIsOpen(false)}><X size={32} /></button>
+                  {items.map((item) => <button key={item} onClick={() => { setView(item); setIsOpen(false); }} className="text-3xl font-futuristic text-white/80 uppercase tracking-widest">_{item}</button>)}
+                </motion.div>
+              )}</AnimatePresence>
+            </nav>
+          );
+        };
+
+        const PageWrapper = ({ children, title, subtitle, onBack }) => (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen bg-black text-white pt-32 pb-24 px-6 relative z-10">
+            <div className="container mx-auto max-w-6xl">
+              <button onClick={onBack} className="group flex items-center gap-3 font-mono text-[10px] tracking-widest uppercase text-white/40 hover:text-white transition-all mb-16">
+                <div className="w-8 h-px bg-white/20 group-hover:w-12 group-hover:bg-green-500 transition-all" />
+                Return_to_Nexus
+              </button>
+              <div className="mb-24">
+                <MetadataLabel active>{subtitle}</MetadataLabel>
+                <h1 className="text-5xl md:text-9xl font-futuristic font-black uppercase tracking-tighter leading-none text-glow">{title}</h1>
+              </div>
+              {children}
+            </div>
+          </motion.div>
+        );
+
+        const VisionPage = ({ onBack }) => (
+          <PageWrapper title="Vision" subtitle="MANIFESTO_ARCH_2025" onBack={onBack}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
+              <div className="glass-panel p-10 cyber-border">
+                <h2 className="text-2xl font-futuristic font-bold uppercase mb-6 tracking-tight">2025 Revenue Mission</h2>
+                <div className="p-6 border-l-4 border-green-500 bg-green-500/5 mb-8">
+                  <h3 className="font-futuristic text-xl text-white uppercase tracking-wider mb-2">Primary Objective</h3>
+                  <p className="text-white/90 text-lg font-bold">To help businesses add $10M in revenue this year through elite connectivity.</p>
+                </div>
+
+                <div className="flex justify-center items-center py-10 relative group mb-12">
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <motion.svg 
+                        viewBox="0 0 200 200" 
+                        className="w-48 h-48 opacity-40 group-hover:opacity-100 transition-opacity"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    >
+                      <circle 
+                        cx="100" 
+                        cy="100" 
+                        r="85" 
+                        stroke="#22c55e" 
+                        strokeWidth="1.5" 
+                        strokeDasharray="10 10" 
+                        fill="none" 
+                      />
+                    </motion.svg>
+                  </div>
+                  <motion.div 
+                    className="relative z-10 glass-panel p-10 cyber-border border-green-500/30 flex flex-col items-center"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <span className="text-7xl font-black font-futuristic text-green-500 text-glow">10M</span>
+                    <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.4em] mt-2">Revenue_Sync_Goal</span>
+                  </motion.div>
+                </div>
+
+                <h2 className="text-2xl font-futuristic font-bold uppercase mb-6 tracking-tight">The Revenue Frontier</h2>
+                <p className="text-white/60 text-lg leading-relaxed font-light mb-8">We don't just "find leads." We architect a digital expansion protocol that bridges the gap between high-level engineering solutions and desperate market demand. Our vision is to eliminate the friction of sales by making every connection data-driven and guaranteed.</p>
+
+                <div className="space-y-4">
+                  <p className="text-white/40 text-sm font-mono border-l border-green-500/30 pl-4 uppercase">Directives:</p>
+                  <ul className="space-y-2 text-xs font-mono text-white/60">
+                    <li>- 100% Data Integrity in Outbound Operations</li>
+                    <li>- Zero-Waste Outreach Algorithms</li>
+                    <li>- Performance-Linked Compensation Protocols</li>
+                    <li>- Global Scale via Proprietary Tech Stack</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                {[ 
+                    { icon: <Target />, label: "Target Saturation", desc: "Total market penetration via multi-channel identification." }, 
+                    { icon: <Network />, label: "Systemic Integration", desc: "Deep API-level linking between demand and fulfillment." },
+                    { icon: <Zap />, label: "Instant Connection", desc: "Removing the 48-hour latency in traditional lead follow-ups." }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-8 p-8 border border-white/5 bg-white/[0.02] glass-panel cyber-border group hover:bg-white/[0.05] transition-all">
+                    <div className="shrink-0 p-3 bg-white/5 rounded-lg text-green-500/80 group-hover:text-green-400 group-hover:scale-110 transition-all">{item.icon}</div>
+                    <div>
+                      <h4 className="font-futuristic text-sm tracking-[0.2em] uppercase text-white/90 mb-2">{item.label}</h4>
+                      <p className="text-white/40 text-[10px] uppercase font-mono tracking-wider">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </PageWrapper>
+        );
+
+        const SystemPhase = ({ number, title, desc, icon: Icon, meta, delay }) => (
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative pl-16 md:pl-24 mb-16 last:mb-0 group"
+          >
+            {/* Connection Rail */}
+            <div className="absolute left-[30px] top-0 bottom-0 w-px bg-white/10 group-last:bottom-auto group-last:h-12">
+               <motion.div 
+                animate={{ top: ['0%', '100%'] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                className="absolute w-1 h-12 bg-gradient-to-b from-transparent via-green-500 to-transparent -left-[1.5px]" 
+               />
+            </div>
+            
+            {/* Step Counter Bubble */}
+            <div className="absolute left-0 top-0 w-[60px] h-[60px] border border-white/20 bg-black flex items-center justify-center font-futuristic text-xs group-hover:border-green-500 group-hover:text-green-500 transition-colors z-10">
+              <div className="absolute inset-0 shimmer opacity-20" />
+              {number}
+            </div>
+
+            <div className="glass-panel p-8 md:p-12 border border-white/5 cyber-border group-hover:bg-white/[0.03] transition-all">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                <div className="flex items-center gap-6">
+                  <div className="p-4 bg-white/5 rounded-sm text-green-500/60 group-hover:text-green-500 transition-colors">
+                    <Icon size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-futuristic text-xl md:text-2xl uppercase tracking-tighter group-hover:text-glow transition-all">{title}</h3>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]" />
+                      <span className="font-mono text-[8px] text-white/30 uppercase tracking-[0.2em]">{meta}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="font-mono text-[10px] text-white/20 uppercase tracking-[0.4em] hidden md:block">
+                  Status: <span className="text-green-500/40">Active_Protocol</span>
+                </div>
+              </div>
+              <p className="text-white/50 text-base font-light leading-relaxed max-w-2xl">{desc}</p>
+              
+              {/* Decorative System Lines */}
+              <div className="mt-8 flex gap-4 overflow-hidden opacity-10">
+                 {[...Array(5)].map((_, i) => (
+                   <motion.div 
+                    key={i} 
+                    animate={{ scaleY: [1, 1.5, 1] }} 
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+                    className="w-1 h-8 bg-white" 
+                   />
+                 ))}
+              </div>
+            </div>
+          </motion.div>
+        );
+
+        const SystemPage = ({ onBack }) => (
+          <PageWrapper title="System" subtitle="ENGINEERING_SPEC_V3" onBack={onBack}>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-16 items-start">
+                <div className="lg:col-span-5 lg:sticky lg:top-32 h-full">
+                    <ConnectorVisualization />
+                    <div className="mt-12 glass-panel p-8 border border-white/5 cyber-border hidden lg:block">
+                        <MetadataLabel active>SYSTEM_METRICS</MetadataLabel>
+                        <div className="space-y-4 pt-4">
+                            {[
+                                { l: "Processing Load", v: "32%" },
+                                { l: "Outbound Velocity", v: "14.2k/hr" },
+                                { l: "Connection Accuracy", v: "99.2%" }
+                            ].map((s, i) => (
+                                <div key={i} className="flex justify-between font-mono text-[10px] uppercase">
+                                    <span className="text-white/40">{s.l}</span>
+                                    <span className="text-green-500">{s.v}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="lg:col-span-7">
+                    <SystemPhase 
+                      number="01" 
+                      title="Harvesting Engine" 
+                      desc="Massive data extraction via custom-built web crawlers and social scrapers. We identify the 'Silent Demand'—businesses that need you but haven't started searching yet. Our engines operate 24/7 across 50+ digital data streams."
+                      icon={Database}
+                      meta="DATA_EXTRACTION_STACK"
+                      delay={0.2}
+                    />
+                    <SystemPhase 
+                      number="02" 
+                      title="Neural Filtering" 
+                      desc="Neural analysis of lead quality. Our logic engine removes the 'tire-kickers' and prioritizes high-intent prospects using proprietary intent-data scoring. We only pass through leads with verified capital and immediate needs."
+                      icon={Eye}
+                      meta="INTENT_ANALYSIS_LOOP"
+                      delay={0.4}
+                    />
+                    <SystemPhase 
+                      number="03" 
+                      title="Strategic Deployment" 
+                      desc="Automated outreach at superhuman scale. 10,000+ touchpoints across LinkedIn, Email, and Social, all appearing as personal, high-value connections. Every message is algorithmically tailored to trigger a response."
+                      icon={Share2}
+                      meta="CONNECTION_UPLINK"
+                      delay={0.6}
+                    />
+                    <SystemPhase 
+                      number="04" 
+                      title="Revenue Sync" 
+                      desc="Final integration into your sales hub. Leads are synced in real-time to your CRM, fully warmed and ready for closing. We monitor conversion cycles to optimize the entire logic loop iteratively."
+                      icon={Activity}
+                      meta="CONVERSION_PROTOCOL"
+                      delay={0.8}
+                    />
+                </div>
+            </div>
+          </PageWrapper>
+        );
+
+        const PortfolioPage = ({ onBack }) => (
+          <PageWrapper title="Cases" subtitle="DEPLOYMENT_DATA_STREAM" onBack={onBack}>
+            <div className="space-y-12">
+                <div className="glass-panel cyber-border p-12 hover:bg-white/[0.02] transition-all group">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <h3 className="text-4xl md:text-6xl font-futuristic font-black uppercase tracking-tighter group-hover:text-glow">MyoProcess</h3>
+                        <div className="px-4 py-2 bg-green-500/10 border border-green-500/20 text-green-500 font-mono text-[10px] tracking-widest uppercase">Verified Protocol</div>
+                    </div>
+                    <p className="text-white/50 text-xl font-light leading-relaxed mb-12 max-w-3xl">Complete transformation of a manual intake system into a 'Revenue Hub.' Automated the identification of SME prospects and achieved 90% meeting booking rate.</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-8 border-t border-white/10">
+                        <div><span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Yield</span><span className="text-2xl font-bold font-futuristic text-green-500/80">$20k+ MRR</span></div>
+                        <div><span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Cycle</span><span className="text-2xl font-bold font-futuristic text-white">14 Days</span></div>
+                        <div><span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Volume</span><span className="text-2xl font-bold font-futuristic text-white">5k Leads/mo</span></div>
+                        <div><span className="text-[10px] font-mono text-white/20 uppercase block mb-2">Status</span><span className="text-2xl font-bold font-futuristic text-green-500">OPTIMIZED</span></div>
+                    </div>
+                </div>
+            </div>
+          </PageWrapper>
+        );
+
+        const PricingPage = ({ onBack }) => (
+          <PageWrapper title="Pricing" subtitle="CAPITAL_ALIGNMENT_PROTOCOL" onBack={onBack}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+                <div className="p-12 border border-white/10 glass-panel cyber-border bg-white/[0.01]">
+                    <MetadataLabel active>MODEL_A: ACCESS</MetadataLabel>
+                    <h3 className="text-4xl font-futuristic font-black mb-6 uppercase tracking-tight">Access Fee</h3>
+                    <p className="text-white/60 text-lg font-light mb-8 leading-relaxed">A one-time setup protocol to initialize your dedicated sales infrastructure, calibrate the harvesting engines, and define the target parameters.</p>
+                    <div className="text-green-500 font-mono text-xs uppercase tracking-[0.3em] mb-4">Includes:</div>
+                    <ul className="space-y-3 text-sm font-light text-white/40 mb-12">
+                        <li>- Dedicated Server Node Deployment</li>
+                        <li>- Custom Lead Harvesting Algorithm</li>
+                        <li>- Logic Training & Intent Scoring</li>
+                    </ul>
+                </div>
+                <div className="p-12 border border-green-500/40 glass-panel cyber-border bg-green-500/[0.02]">
+                    <MetadataLabel active>MODEL_B: PERFORMANCE</MetadataLabel>
+                    <h3 className="text-4xl font-futuristic font-black mb-6 uppercase tracking-tight text-glow">Rev-Share</h3>
+                    <p className="text-white/60 text-lg font-light mb-8 leading-relaxed">Our interests are surgically aligned. We only profit when you close. A percentage of generated revenue ensures we are incentivized to optimize for quality, not just quantity.</p>
+                    <div className="text-green-500 font-mono text-xs uppercase tracking-[0.3em] mb-4">Parameters:</div>
+                    <ul className="space-y-3 text-sm font-light text-white/40 mb-12">
+                        <li>- 10-20% Share on Closed Revenue</li>
+                        <li>- Calculated on Settled Contracts</li>
+                        <li>- Monthly Performance Reporting</li>
+                    </ul>
+                </div>
+            </div>
+            <div className="text-center py-20 border-t border-white/5">
+                <h4 className="font-futuristic text-2xl uppercase mb-8">Ready for a Custom Quote?</h4>
+                <p className="text-white/40 font-mono text-[10px] uppercase tracking-widest mb-12">Establishing connection to the quotation terminal...</p>
+                <a href="mailto:info@getautomation.in" className="inline-block px-12 py-5 bg-white text-black font-mono text-xs uppercase tracking-[0.5em] hover:bg-green-500 hover:text-white transition-all">Request_Detailed_Quote</a>
+            </div>
+          </PageWrapper>
+        );
+
+        const TeamPage = ({ onBack }) => (
+          <PageWrapper title="Elite" subtitle="CORE_OPERATORS" onBack={onBack}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {TEAM.map((member, i) => (
+                <div key={i} className="group border border-white/5 p-12 bg-white/[0.01] glass-panel cyber-border flex flex-col">
+                  <div className="aspect-square bg-white/[0.02] mb-12 flex items-center justify-center relative overflow-hidden group-hover:bg-green-500/[0.05] transition-all">
+                    <span className="text-9xl font-black font-futuristic text-white/[0.02] group-hover:text-green-500/10 transition-all duration-1000 select-none">{member.initials}</span>
+                  </div>
+                  <MetadataLabel active>LOC: {member.loc}</MetadataLabel>
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-futuristic text-3xl uppercase tracking-tighter group-hover:text-glow">{member.name}</h4>
+                    {member.linkedin && <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 hover:bg-green-500/20 text-white/40 hover:text-green-500 transition-all rounded-lg border border-white/10 hover:border-green-500/40"><Linkedin size={20} /></a>}
+                  </div>
+                  <p className="text-white/30 font-mono text-[9px] tracking-[0.4em] uppercase mb-8">{member.role}</p>
+                  <p className="text-white/40 text-sm leading-relaxed font-light flex-grow">{member.bio}</p>
+                </div>
+              ))}
+            </div>
+          </PageWrapper>
+        );
+
+        const ContactPage = ({ onBack }) => (
+          <PageWrapper title="Link" subtitle="ESTABLISH_UPLINK" onBack={onBack}>
+            <div className="max-w-4xl py-24 glass-panel p-12 md:p-20 cyber-border">
+              <MetadataLabel active>SECURE_ENTRY_POINT</MetadataLabel>
+              <h3 className="font-futuristic text-3xl md:text-5xl uppercase mb-16 tracking-tighter text-white/80">Direct Terminal Access</h3>
+              <a href="mailto:info@getautomation.in" className="text-2xl md:text-6xl font-futuristic font-black border-b border-white/10 pb-8 hover:text-green-500/80 transition-all block text-glow truncate">info@getautomation.in</a>
+            </div>
+          </PageWrapper>
+        );
+
+        const Hero = ({ setView }) => (
+          <section className="min-h-screen w-full flex flex-col items-center justify-center bg-black relative overflow-hidden px-6 pb-20 pt-32">
+            <div className="relative z-10 text-center space-y-10">
+              <MetadataLabel active>ACCESS_FEE_MODEL_ACTIVE</MetadataLabel>
+              <h1 className="text-6xl md:text-[9rem] lg:text-[11rem] font-futuristic font-black tracking-tighter leading-[0.85] mb-8">ELITE <br /><span className="text-white/20 font-light uppercase">Connector</span></h1>
+              <p className="max-w-xl mx-auto text-white/40 font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase leading-loose">We architect guaranteed sales pipelines for businesses seeking hyper-scale expansion via automated connectivity.</p>
+              <div className="flex flex-col md:flex-row gap-6 justify-center pt-8">
+                <button onClick={() => setView('contact')} className="px-14 py-6 bg-white text-black font-mono text-[10px] tracking-[0.4em] uppercase hover:bg-green-500 hover:text-white transition-all cyber-border">Initiate_Nexus</button>
+                <button onClick={() => setView('system')} className="px-14 py-6 border border-white/10 font-mono text-[10px] tracking-[0.4em] uppercase hover:border-green-500 hover:bg-green-500/5 transition-all cyber-border">System_Manifesto</button>
+              </div>
+            </div>
+          </section>
+        );
+
+        const App = () => {
+          const [view, setView] = useState('home');
+          useEffect(() => { window.scrollTo(0, 0); }, [view]);
+          return (
+            <div className="relative min-h-screen bg-black selection:bg-green-500 selection:text-black">
+              <CyberBackground />
+              <Navbar setView={setView} currentView={view} />
+              <AnimatePresence mode="wait">
+                {view === 'home' ? (
+                  <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <Hero setView={setView} />
+                    
+                    <section className="py-48 bg-white text-black relative z-10">
+                      <div className="container mx-auto px-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-black/10 border border-black/10">
+                          {[ 
+                            { label: "Access Control", icon: <Cpu key="cpu" />, desc: "Structured entry fees for dedicated sales nodes." }, 
+                            { label: "Data Harvesting", icon: <Database key="db" />, desc: "Massive scale lead extraction and scraping engines." }, 
+                            { label: "Expansion Logic", icon: <Layers key="layers" />, desc: "Scaling outreach volume across multi-channel stacks." }, 
+                            { label: "RevShare Sync", icon: <Globe key="globe" />, desc: "Global performance alignment on closed contracts." } 
+                          ].map((item, i) => (
+                            <div key={i} className="bg-white p-14 hover:bg-black hover:text-white transition-all duration-500 group border border-transparent hover:border-green-500/20">
+                              <div className="mb-10 opacity-30 group-hover:opacity-100 transition-opacity group-hover:text-green-500">{item.icon}</div>
+                              <h4 className="font-futuristic text-xl mb-6 uppercase tracking-tighter group-hover:text-glow">{item.label}</h4>
+                              <p className="text-sm opacity-50 font-light group-hover:opacity-80">{item.desc}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+
+                    <section className="py-48 bg-black relative z-10 overflow-hidden">
+                        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+                            <div>
+                                <MetadataLabel active>CORE_ADVANTAGE</MetadataLabel>
+                                <h2 className="text-5xl md:text-7xl font-futuristic font-black uppercase tracking-tighter mb-12">The <br /><span className="text-green-500">Unfair</span> Advantage</h2>
+                                <p className="text-white/40 text-lg font-light leading-relaxed mb-12">Traditional agencies talk about impressions. We talk about income. By building a proprietary layer between your business and your market, we automate the hardest part of growth: finding people who want to buy from you right now.</p>
+                                <div className="space-y-6">
+                                    {[ 
+                                        { icon: <Fingerprint />, text: "Proprietary Intent Data Identification" },
+                                        { icon: <Workflow />, text: "Automated Multi-Channel Sequences" },
+                                        { icon: <Trophy />, text: "Guaranteed Connection Protocol" }
+                                    ].map((feat, i) => (
+                                        <div key={i} className="flex items-center gap-4 text-xs font-mono uppercase tracking-widest text-white/60">
+                                            <div className="text-green-500">{feat.icon}</div>
+                                            {feat.text}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-green-500/20 blur-[120px] rounded-full animate-pulse" />
+                                <div className="relative glass-panel border border-white/5 p-12 cyber-border">
+                                    <h4 className="font-futuristic text-xs tracking-widest uppercase mb-8 text-white/40">Status: System Operational</h4>
+                                    <div className="space-y-8">
+                                        {[ 
+                                            { label: "Leads Harvested", val: "52,891,012" },
+                                            { label: "Connections Established", val: "8.4M" },
+                                            { label: "Revenue Facilitated", val: "$12.5M+" }
+                                        ].map((stat, i) => (
+                                            <div key={i}>
+                                                <div className="text-[10px] font-mono text-white/20 uppercase mb-2">{stat.label}</div>
+                                                <div className="text-4xl font-futuristic font-black text-white/90">{stat.val}</div>
+                                                <div className="w-full h-1 bg-white/5 mt-2"><div className="h-full bg-green-500/40" style={{width: `${70 + i*10}%`}} /></div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                  </motion.div>
+                ) : (
+                  <div key="page-content">
+                    {view === 'vision' && <VisionPage onBack={() => setView('home')} />}
+                    {view === 'system' && <SystemPage onBack={() => setView('home')} />}
+                    {view === 'pricing' && <PricingPage onBack={() => setView('home')} />}
+                    {view === 'portfolio' && <PortfolioPage onBack={() => setView('home')} />}
+                    {view === 'team' && <TeamPage onBack={() => setView('home')} />}
+                    {view === 'contact' && <ContactPage onBack={() => setView('home')} />}
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        };
+
+        const rootContainer = document.getElementById('root');
+        if (rootContainer) {
+            const root = ReactDOM.createRoot(rootContainer);
+            root.render(<App />);
+        }
+    </script>
 </body>
 </html>
