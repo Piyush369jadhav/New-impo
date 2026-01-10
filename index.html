@@ -116,7 +116,8 @@
           ArrowRight, Zap, Cpu, Menu, X, Target, ArrowLeft, Activity, 
           Globe, Database, Search, CheckCircle, Network, Terminal, 
           Layers, BarChart3, ShieldAlert, HardDrive, Linkedin, Coins,
-          Trophy, Workflow, Fingerprint, Eye, Radio, Share2
+          Trophy, Workflow, Fingerprint, Eye, Radio, Share2, TrendingUp,
+          Users, ShieldCheck, Briefcase
         } from 'lucide-react';
 
         const TEAM = [
@@ -325,10 +326,10 @@
         );
 
         const VisionPage = ({ onBack }) => (
-          <PageWrapper title="Vision" subtitle="MANIFESTO_ARCH_2025" onBack={onBack}>
+          <PageWrapper title="Vision" subtitle="MANIFESTO_ARCH_2026" onBack={onBack}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-start">
               <div className="glass-panel p-10 cyber-border">
-                <h2 className="text-2xl font-futuristic font-bold uppercase mb-6 tracking-tight">2025 Revenue Mission</h2>
+                <h2 className="text-2xl font-futuristic font-bold uppercase mb-6 tracking-tight">2026 Revenue Mission</h2>
                 <div className="p-6 border-l-4 border-green-500 bg-green-500/5 mb-8">
                   <h3 className="font-futuristic text-xl text-white uppercase tracking-wider mb-2">Primary Objective</h3>
                   <p className="text-white/90 text-lg font-bold">To help businesses add $10M in revenue this year through elite connectivity.</p>
@@ -358,7 +359,7 @@
                     whileHover={{ scale: 1.05 }}
                   >
                     <span className="text-7xl font-black font-futuristic text-green-500 text-glow">10M</span>
-                    <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.4em] mt-2">Revenue_Sync_Goal</span>
+                    <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.4em] mt-2">Revenue_Sync_Goal_2026</span>
                   </motion.div>
                 </div>
 
@@ -663,20 +664,67 @@
                             </div>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-green-500/20 blur-[120px] rounded-full animate-pulse" />
-                                <div className="relative glass-panel border border-white/5 p-12 cyber-border">
-                                    <h4 className="font-futuristic text-xs tracking-widest uppercase mb-8 text-white/40">Status: System Operational</h4>
-                                    <div className="space-y-8">
+                                <div className="relative glass-panel border border-white/5 p-10 md:p-14 cyber-border">
+                                    <div className="flex justify-between items-center mb-10">
+                                      <h4 className="font-futuristic text-[10px] tracking-[0.3em] uppercase text-white/40">Status: System Operational</h4>
+                                      <div className="flex gap-2">
+                                        <div className="w-1 h-1 bg-green-500 rounded-full animate-ping" />
+                                        <span className="font-mono text-[8px] text-green-500 uppercase">Live_Sync</span>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-12">
                                         {[ 
-                                            { label: "Leads Harvested", val: "52,891,012" },
-                                            { label: "Connections Established", val: "8.4M" },
-                                            { label: "Revenue Facilitated", val: "$12.5M+" }
+                                            { 
+                                              label: "Total Leads in Data", 
+                                              val: "9M+", 
+                                              icon: <Users size={16} />,
+                                              sub: "Verified business contacts"
+                                            },
+                                            { 
+                                              label: "Strategic Partner Nodes", 
+                                              val: "1,250+", 
+                                              icon: <Network size={16} />,
+                                              sub: "Active high-value uplinks"
+                                            },
+                                            { 
+                                              label: "2026 Revenue Mission", 
+                                              val: "$10M+", 
+                                              icon: <TrendingUp size={16} />,
+                                              sub: "Target client expansion goal",
+                                              highlight: true
+                                            }
                                         ].map((stat, i) => (
-                                            <div key={i}>
-                                                <div className="text-[10px] font-mono text-white/20 uppercase mb-2">{stat.label}</div>
-                                                <div className="text-4xl font-futuristic font-black text-white/90">{stat.val}</div>
-                                                <div className="w-full h-1 bg-white/5 mt-2"><div className="h-full bg-green-500/40" style={{width: `${70 + i*10}%`}} /></div>
+                                            <div key={i} className="group/stat">
+                                                <div className="flex items-center justify-between mb-3">
+                                                  <div className="flex items-center gap-3">
+                                                    <div className={`p-2 bg-white/5 rounded-sm transition-colors group-hover/stat:bg-green-500/10 ${stat.highlight ? 'text-green-500' : 'text-white/30'}`}>
+                                                      {stat.icon}
+                                                    </div>
+                                                    <div>
+                                                      <div className="text-[9px] font-mono text-white/20 uppercase tracking-widest leading-none mb-1">{stat.label}</div>
+                                                      <div className="text-[7px] font-mono text-white/10 uppercase tracking-[0.2em]">{stat.sub}</div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className={`text-4xl md:text-5xl font-futuristic font-black uppercase transition-all group-hover/stat:text-glow ${stat.highlight ? 'text-green-500' : 'text-white/90'}`}>
+                                                  {stat.val}
+                                                </div>
+                                                <div className="w-full h-[2px] bg-white/5 mt-4 overflow-hidden relative">
+                                                  <motion.div 
+                                                    initial={{ x: '-100%' }}
+                                                    whileInView={{ x: '0%' }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ duration: 1.5, delay: i * 0.2 }}
+                                                    className={`h-full absolute left-0 ${stat.highlight ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-white/20'}`} 
+                                                    style={{width: `${75 + i*8}%`}} 
+                                                  />
+                                                </div>
                                             </div>
                                         ))}
+                                    </div>
+                                    <div className="mt-12 pt-8 border-t border-white/5 flex items-center gap-4 text-white/10">
+                                       <ShieldCheck size={14} />
+                                       <span className="font-mono text-[7px] uppercase tracking-[0.4em]">Protocol_Integrity: 99.98%</span>
                                     </div>
                                 </div>
                             </div>
